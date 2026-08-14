@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DevTrace - Registro de Opciones por Rol</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Geist:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-tint": "#1b6489",
+                        "error-container": "#ffdad6",
+                        "surface-variant": "#e0e3e5",
+                        "secondary": "#45636d",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed-variant": "#2d4b55",
+                        "tertiary-container": "#a9000f",
+                        "tertiary": "#7d0008",
+                        "on-surface": "#191c1e",
+                        "inverse-surface": "#2d3133",
+                        "tertiary-fixed": "#ffdad6",
+                        "on-surface-variant": "#40484e",
+                        "on-secondary-fixed": "#001f28",
+                        "tertiary-fixed-dim": "#ffb4ab",
+                        "on-tertiary-container": "#ffb3aa",
+                        "surface-container-low": "#f2f4f6",
+                        "error": "#ba1a1a",
+                        "on-primary": "#ffffff",
+                        "surface-container-highest": "#e0e3e5",
+                        "primary": "#00405b",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#8fcef7",
+                        "outline": "#70787e",
+                        "on-secondary-container": "#4b6973",
+                        "surface-bright": "#f7f9fb",
+                        "on-tertiary-fixed-variant": "#93000b",
+                        "on-primary-fixed-variant": "#004c6c",
+                        "on-primary-container": "#8fcdf6",
+                        "primary-container": "#00587c",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed": "#410002",
+                        "primary-fixed-dim": "#8fcef7",
+                        "primary-fixed": "#c7e7ff",
+                        "surface-container-lowest": "#ffffff",
+                        "background": "#f7f9fb",
+                        "surface-container": "#eceef0",
+                        "secondary-fixed-dim": "#accbd8",
+                        "on-background": "#191c1e",
+                        "secondary-fixed": "#c8e8f4",
+                        "on-error": "#ffffff",
+                        "surface": "#f7f9fb",
+                        "outline-variant": "#c0c7cf",
+                        "on-primary-fixed": "#001e2e",
+                        "secondary-container": "#c8e8f4",
+                        "inverse-on-surface": "#eff1f3",
+                        "surface-dim": "#d8dadc",
+                        "surface-container-high": "#e6e8ea"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "xs": "4px",
+                        "xl": "40px",
+                        "sm": "8px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "32px",
+                        "base": "4px",
+                        "md": "16px",
+                        "lg": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "code-data": ["Geist"],
+                        "body-lg": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "code-data": ["13px", { "lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "letterSpacing": "0em", "fontWeight": "400" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #F8FAFC; /* Level 0 Canvas */
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid #E2E8F0;
+            box-shadow: 0 4px 20px -2px rgba(0, 88, 124, 0.08);
+        }
+        .glass-card {
+            background-color: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            box-shadow: 0 4px 20px -2px rgba(0, 88, 124, 0.08);
+        }
+        .custom-checkbox:checked {
+            background-color: #00587C;
+            border-color: #00587C;
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-surface antialiased overflow-x-hidden">
+<!-- TopAppBar -->
+<header class="bg-surface/95 dark:bg-surface-container/95 backdrop-blur-md fixed top-0 w-full z-40 border-b border-outline-variant/30 shadow-sm flex items-center justify-between px-margin-desktop h-16 transition-colors">
+<div class="flex items-center gap-md">
+<span class="font-headline-lg text-headline-lg font-bold text-primary tracking-tight">DevTrace</span>
+<div class="hidden md:flex ml-lg gap-md">
+<a class="text-on-surface-variant cursor-pointer hover:bg-secondary-container/20 transition-colors px-3 py-2 rounded-md" href="#">Dashboard</a>
+<a class="text-on-surface-variant cursor-pointer hover:bg-secondary-container/20 transition-colors px-3 py-2 rounded-md" href="#">Users</a>
+<a class="text-primary font-semibold border-b-2 border-primary cursor-pointer active:opacity-80 transition-all px-3 py-2" href="#">Roles</a>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<button class="p-2 text-on-surface-variant hover:bg-secondary-container/20 rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-secondary-container/20 rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-secondary-container/20 rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="ml-sm h-8 w-8 rounded-full bg-surface-container-high overflow-hidden border border-outline-variant/30">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="A professional headshot of a corporate user, neutral expression, modern office lighting, corporate style avatar, highly detailed." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-H4_qBCuaBQxWUPWM8zde3qhbpiMIsN3aP_Qqv90caRhy07_ZeXy1qdpebXl6UMb90kpvErzMGjdtALsFXxSJtzcRGIiY23KEurcWgSgaZBmqdWB-avXuYI2yxNYZRpPpQ6qUNVJ3KxQ-CAtTM6_H506E9ZTsnh4fK5itCM6EEw-KV7luNu377XrRD3QeXDZSMb6BD6Pu4m31yTitE_5UIVsqLQ7b0Z3KDdbGlG5TLIFBgokhwUpwdQ"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="hidden md:flex flex-col gap-2 p-md h-full bg-surface fixed left-0 top-0 w-[280px] z-50 border-r border-outline-variant/30 shadow-sm mt-16 pt-lg">
+<div class="mb-lg px-4">
+<div class="font-headline-md text-headline-md font-bold text-primary mb-1">Admin Console</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">DevTrace Enterprise</div>
+</div>
+<nav class="flex-1 flex flex-col gap-1">
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:text-primary hover:bg-surface-container-low transition-all duration-200 cursor-pointer active:scale-[0.98] rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:text-primary hover:bg-surface-container-low transition-all duration-200 cursor-pointer active:scale-[0.98] rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-body-md text-body-md">Users</span>
+</a>
+<a class="flex items-center gap-3 bg-secondary-container/20 text-primary font-semibold rounded-lg px-4 py-3 relative before:absolute before:left-0 before:w-1 before:h-2/3 before:bg-primary before:rounded-full cursor-pointer active:scale-[0.98] transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="security" data-weight="fill" style="font-variation-settings: 'FILL' 1;">security</span>
+<span class="font-body-md text-body-md">Roles</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:text-primary hover:bg-surface-container-low transition-all duration-200 cursor-pointer active:scale-[0.98] rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="menu_open">menu_open</span>
+<span class="font-body-md text-body-md">Menu Options</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:text-primary hover:bg-surface-container-low transition-all duration-200 cursor-pointer active:scale-[0.98] rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="error">error</span>
+<span class="font-body-md text-body-md">Incidents</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:text-primary hover:bg-surface-container-low transition-all duration-200 cursor-pointer active:scale-[0.98] rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-body-md text-body-md">Logs</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-outline-variant/30 pt-4">
+<div class="px-4 py-2 mb-2">
+<span class="font-label-caps text-label-caps text-primary bg-primary/10 px-2 py-1 rounded-full">System Status: Healthy</span>
+</div>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-2 hover:text-primary hover:bg-surface-container-low transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-body-sm text-body-sm">Support</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-2 hover:text-primary hover:bg-surface-container-low transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="font-body-sm text-body-sm">Documentation</span>
+</a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="pt-[88px] md:pl-[304px] px-margin-mobile md:px-margin-desktop pb-xl min-h-screen">
+<!-- Page Header -->
+<div class="mb-lg flex flex-col md:flex-row md:items-end justify-between gap-md">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-xs">Role Permissions Mapping</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Assign and configure menu access options for specific system roles.</p>
+</div>
+<div class="flex gap-sm">
+<button class="px-6 py-2 rounded-full font-body-sm text-body-sm font-semibold border border-primary text-primary hover:bg-primary/5 transition-colors">
+                    Cancel
+                </button>
+<button class="px-6 py-2 rounded-full font-body-sm text-body-sm font-semibold bg-primary text-on-primary hover:bg-primary/90 shadow-md shadow-primary/20 transition-all active:scale-[0.98]">
+                    Save Permissions
+                </button>
+</div>
+</div>
+<!-- Configuration Form -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-lg">
+<!-- Role Selector Sidebar -->
+<div class="xl:col-span-4 flex flex-col gap-md">
+<div class="glass-card rounded-xl p-lg">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-md border-b border-outline-variant/30 pb-sm">Role Selection</h2>
+<div class="mb-md">
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-2" for="role-select">TARGET ROLE</label>
+<select class="w-full rounded-[12px] border-outline-variant bg-surface-lowest text-on-surface focus:border-primary focus:ring focus:ring-secondary-fixed/50 transition-shadow" id="role-select">
+<option value="">Select a role...</option>
+<option selected="" value="admin">System Administrator</option>
+<option value="manager">Operations Manager</option>
+<option value="analyst">Data Analyst</option>
+<option value="viewer">Read-Only Viewer</option>
+</select>
+</div>
+<div class="bg-surface-container-low rounded-lg p-md border border-outline-variant/20">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant mb-2">ROLE DETAILS</h3>
+<p class="font-body-sm text-body-sm text-on-surface mb-1"><span class="font-semibold">ID:</span> ROL-001</p>
+<p class="font-body-sm text-body-sm text-on-surface mb-1"><span class="font-semibold">Users Assigned:</span> 12</p>
+<p class="font-body-sm text-body-sm text-on-surface"><span class="font-semibold">Description:</span> Full system access including user management and security settings.</p>
+</div>
+</div>
+</div>
+<!-- Permissions Matrix -->
+<div class="xl:col-span-8">
+<div class="glass-card rounded-xl p-lg">
+<div class="flex items-center justify-between mb-lg border-b border-outline-variant/30 pb-sm">
+<h2 class="font-headline-md text-headline-md text-on-surface">Menu Access Configuration</h2>
+<div class="flex items-center gap-sm">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Select All Modules</span>
+<input class="custom-checkbox w-5 h-5 rounded border-outline-variant text-primary focus:ring-secondary-fixed cursor-pointer transition-colors" type="checkbox"/>
+</div>
+</div>
+<div class="space-y-md">
+<!-- Module 1: System Administration -->
+<div class="border border-outline-variant/30 rounded-lg overflow-hidden">
+<div class="bg-surface-container-lowest px-md py-3 flex items-center justify-between cursor-pointer hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary" data-icon="settings_applications">settings_applications</span>
+<span class="font-body-md text-body-md font-semibold text-on-surface">System Administration</span>
+</div>
+<div class="flex items-center gap-sm">
+<span class="font-label-caps text-label-caps text-on-surface-variant">4 OPTIONS</span>
+<span class="material-symbols-outlined text-outline" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+<div class="p-md bg-surface-bright grid grid-cols-1 md:grid-cols-2 gap-sm border-t border-outline-variant/20">
+<label class="flex items-start gap-3 p-3 rounded-lg hover:bg-surface-container transition-colors cursor-pointer border border-transparent hover:border-outline-variant/30">
+<input checked="" class="custom-checkbox mt-0.5 w-4 h-4 rounded border-outline-variant text-primary focus:ring-secondary-fixed" type="checkbox"/>
+<div>
+<span class="block font-body-sm text-body-sm font-medium text-on-surface">User Management</span>
+<span class="block font-body-sm text-body-sm text-on-surface-variant text-[12px]">Create, edit, and delete user accounts.</span>
+</div>
+</label>
+<label class="flex items-start gap-3 p-3 rounded-lg hover:bg-surface-container transition-colors cursor-pointer border border-transparent hover:border-outline-variant/30">
+<input checked="" class="custom-checkbox mt-0.5 w-4 h-4 rounded border-outline-variant text-primary focus:ring-secondary-fixed" type="checkbox"/>
+<div>
+<span class="block font-body-sm text-body-sm font-medium text-on-surface">Role Configuration</span>
+<span class="block font-body-sm text-body-sm text-on-surface-variant text-[12px]">Define roles and access policies.</span>
+</div>
+</label>
+<label class="flex items-start gap-3 p-3 rounded-lg hover:bg-surface-container transition-colors cursor-pointer border border-transparent hover:border-outline-variant/30">
+<input class="custom-checkbox mt-0.5 w-4 h-4 rounded border-outline-variant text-primary focus:ring-secondary-fixed" type="checkbox"/>
+<div>
+<span class="block font-body-sm text-body-sm font-medium text-on-surface">System Settings</span>
+<span class="block font-body-sm text-body-sm text-on-surface-variant text-[12px]">Global application parameters.</span>
+</div>
+</label>
+<label class="flex items-start gap-3 p-3 rounded-lg hover:bg-surface-container transition-colors cursor-pointer border border-transparent hover:border-outline-variant/30">
+<input class="custom-checkbox mt-0.5 w-4 h-4 rounded border-outline-variant text-primary focus:ring-secondary-fixed" type="checkbox"/>
+<div>
+<span class="block font-body-sm text-body-sm font-medium text-on-surface">Audit Logs</span>
+<span class="block font-body-sm text-body-sm text-on-surface-variant text-[12px]">View system-wide activity logs.</span>
+</div>
+</label>
+</div>
+</div>
+<!-- Module 2: Operations -->
+<div class="border border-outline-variant/30 rounded-lg overflow-hidden">
+<div class="bg-surface-container-lowest px-md py-3 flex items-center justify-between cursor-pointer hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary" data-icon="monitoring">monitoring</span>
+<span class="font-body-md text-body-md font-semibold text-on-surface">Operations Dashboard</span>
+</div>
+<div class="flex items-center gap-sm">
+<span class="font-label-caps text-label-caps text-on-surface-variant">3 OPTIONS</span>
+<span class="material-symbols-outlined text-outline" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+<div class="p-md bg-surface-bright grid grid-cols-1 md:grid-cols-2 gap-sm border-t border-outline-variant/20">
+<label class="flex items-start gap-3 p-3 rounded-lg hover:bg-surface-container transition-colors cursor-pointer border border-transparent hover:border-outline-variant/30">
+<input checked="" class="custom-checkbox mt-0.5 w-4 h-4 rounded border-outline-variant text-primary focus:ring-secondary-fixed" type="checkbox"/>
+<div>
+<span class="block font-body-sm text-body-sm font-medium text-on-surface">Live Metrics</span>
+<span class="block font-body-sm text-body-sm text-on-surface-variant text-[12px]">Real-time system performance data.</span>
+</div>
+</label>
+<label class="flex items-start gap-3 p-3 rounded-lg hover:bg-surface-container transition-colors cursor-pointer border border-transparent hover:border-outline-variant/30">
+<input checked="" class="custom-checkbox mt-0.5 w-4 h-4 rounded border-outline-variant text-primary focus:ring-secondary-fixed" type="checkbox"/>
+<div>
+<span class="block font-body-sm text-body-sm font-medium text-on-surface">Incident Reports</span>
+<span class="block font-body-sm text-body-sm text-on-surface-variant text-[12px]">View and manage active incidents.</span>
+</div>
+</label>
+<label class="flex items-start gap-3 p-3 rounded-lg hover:bg-surface-container transition-colors cursor-pointer border border-transparent hover:border-outline-variant/30">
+<input class="custom-checkbox mt-0.5 w-4 h-4 rounded border-outline-variant text-primary focus:ring-secondary-fixed" type="checkbox"/>
+<div>
+<span class="block font-body-sm text-body-sm font-medium text-on-surface">Data Export</span>
+<span class="block font-body-sm text-body-sm text-on-surface-variant text-[12px]">Ability to download operational datasets.</span>
+</div>
+</label>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

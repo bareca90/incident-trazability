@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DevTrace - Register Menu Option</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Geist:wght@500&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-tint": "#1b6489",
+                    "error-container": "#ffdad6",
+                    "surface-variant": "#e0e3e5",
+                    "secondary": "#45636d",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed-variant": "#2d4b55",
+                    "tertiary-container": "#a9000f",
+                    "tertiary": "#7d0008",
+                    "on-surface": "#191c1e",
+                    "inverse-surface": "#2d3133",
+                    "tertiary-fixed": "#ffdad6",
+                    "on-surface-variant": "#40484e",
+                    "on-secondary-fixed": "#001f28",
+                    "tertiary-fixed-dim": "#ffb4ab",
+                    "on-tertiary-container": "#ffb3aa",
+                    "surface-container-low": "#f2f4f6",
+                    "error": "#ba1a1a",
+                    "on-primary": "#ffffff",
+                    "surface-container-highest": "#e0e3e5",
+                    "primary": "#00405b",
+                    "on-error-container": "#93000a",
+                    "inverse-primary": "#8fcef7",
+                    "outline": "#70787e",
+                    "on-secondary-container": "#4b6973",
+                    "surface-bright": "#f7f9fb",
+                    "on-tertiary-fixed-variant": "#93000b",
+                    "on-primary-fixed-variant": "#004c6c",
+                    "on-primary-container": "#8fcdf6",
+                    "primary-container": "#00587c",
+                    "on-tertiary": "#ffffff",
+                    "on-tertiary-fixed": "#410002",
+                    "primary-fixed-dim": "#8fcef7",
+                    "primary-fixed": "#c7e7ff",
+                    "surface-container-lowest": "#ffffff",
+                    "background": "#f7f9fb",
+                    "surface-container": "#eceef0",
+                    "secondary-fixed-dim": "#accbd8",
+                    "on-background": "#191c1e",
+                    "secondary-fixed": "#c8e8f4",
+                    "on-error": "#ffffff",
+                    "surface": "#f7f9fb",
+                    "outline-variant": "#c0c7cf",
+                    "on-primary-fixed": "#001e2e",
+                    "secondary-container": "#c8e8f4",
+                    "inverse-on-surface": "#eff1f3",
+                    "surface-dim": "#d8dadc",
+                    "surface-container-high": "#e6e8ea"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "xs": "4px",
+                    "xl": "40px",
+                    "sm": "8px",
+                    "margin-mobile": "16px",
+                    "margin-desktop": "32px",
+                    "base": "4px",
+                    "md": "16px",
+                    "lg": "24px"
+            },
+            "fontFamily": {
+                    "headline-md": [
+                            "Inter"
+                    ],
+                    "display-lg": [
+                            "Inter"
+                    ],
+                    "headline-lg": [
+                            "Inter"
+                    ],
+                    "code-data": [
+                            "Geist"
+                    ],
+                    "body-lg": [
+                            "Inter"
+                    ],
+                    "label-caps": [
+                            "Inter"
+                    ],
+                    "body-md": [
+                            "Inter"
+                    ],
+                    "body-sm": [
+                            "Inter"
+                    ]
+            },
+            "fontSize": {
+                    "headline-md": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "letterSpacing": "-0.01em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "display-lg": [
+                            "48px",
+                            {
+                                    "lineHeight": "56px",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "headline-lg": [
+                            "32px",
+                            {
+                                    "lineHeight": "40px",
+                                    "letterSpacing": "-0.01em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "code-data": [
+                            "13px",
+                            {
+                                    "lineHeight": "18px",
+                                    "letterSpacing": "0.02em",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "28px",
+                                    "letterSpacing": "0em",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "label-caps": [
+                            "12px",
+                            {
+                                    "lineHeight": "16px",
+                                    "letterSpacing": "0.05em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "24px",
+                                    "letterSpacing": "0em",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "body-sm": [
+                            "14px",
+                            {
+                                    "lineHeight": "20px",
+                                    "letterSpacing": "0.01em",
+                                    "fontWeight": "400"
+                            }
+                    ]
+            }
+        },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md text-body-md antialiased overflow-x-hidden min-h-screen">
+<!-- SideNavBar Component -->
+<nav class="bg-surface dark:bg-surface-dim fixed left-0 top-0 h-full w-[280px] z-50 border-r border-outline-variant/30 dark:border-outline/20 shadow-sm dark:shadow-none flex flex-col gap-2 p-md h-full">
+<!-- Header -->
+<div class="flex items-center gap-4 px-4 py-6 mb-4 border-b border-outline-variant/30">
+<div class="h-10 w-10 rounded-lg bg-primary-container flex items-center justify-center text-on-primary font-headline-md text-headline-md">
+                A
+            </div>
+<div>
+<h2 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim text-[16px] leading-tight">Admin Console</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant text-[12px]">DevTrace Enterprise</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<div class="flex-1 flex flex-col gap-1 overflow-y-auto">
+<!-- Inactive: Dashboard -->
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline px-4 py-3 hover:text-primary dark:hover:text-primary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-all duration-200 cursor-pointer active:scale-[0.98] transition-transform rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<!-- Inactive: Users -->
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline px-4 py-3 hover:text-primary dark:hover:text-primary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-all duration-200 cursor-pointer active:scale-[0.98] transition-transform rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]">group</span>
+<span class="font-body-md text-body-md">Users</span>
+</a>
+<!-- Inactive: Roles -->
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline px-4 py-3 hover:text-primary dark:hover:text-primary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-all duration-200 cursor-pointer active:scale-[0.98] transition-transform rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]">security</span>
+<span class="font-body-md text-body-md">Roles</span>
+</a>
+<!-- ACTIVE: Menu Options -->
+<a class="flex items-center gap-3 bg-secondary-container/20 text-primary dark:text-primary-fixed-dim font-semibold rounded-lg px-4 py-3 relative before:absolute before:left-0 before:w-1 before:h-2/3 before:bg-primary before:rounded-full cursor-pointer active:scale-[0.98] transition-transform" href="#">
+<span class="material-symbols-outlined icon-filled text-[20px]">menu_open</span>
+<span class="font-body-md text-body-md font-semibold">Menu Options</span>
+</a>
+<!-- Inactive: Incidents -->
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline px-4 py-3 hover:text-primary dark:hover:text-primary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-all duration-200 cursor-pointer active:scale-[0.98] transition-transform rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]">error</span>
+<span class="font-body-md text-body-md">Incidents</span>
+</a>
+<!-- Inactive: Logs -->
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline px-4 py-3 hover:text-primary dark:hover:text-primary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-all duration-200 cursor-pointer active:scale-[0.98] transition-transform rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]">history</span>
+<span class="font-body-md text-body-md">Logs</span>
+</a>
+</div>
+<!-- Footer -->
+<div class="mt-auto pt-4 border-t border-outline-variant/30 flex flex-col gap-1">
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline px-4 py-3 hover:text-primary dark:hover:text-primary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]">help</span>
+<span class="font-body-md text-body-md">Support</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline px-4 py-3 hover:text-primary dark:hover:text-primary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]">description</span>
+<span class="font-body-md text-body-md">Documentation</span>
+</a>
+<div class="px-4 py-3 mt-2 bg-surface-container-low rounded-lg flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-[#10B981]"></div>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-[12px]">System Status: Healthy</span>
+</div>
+</div>
+</nav>
+<!-- TopAppBar Component -->
+<header class="bg-surface/95 dark:bg-surface-container/95 backdrop-blur-md fixed top-0 w-full z-40 border-b border-outline-variant/30 dark:border-outline/20 shadow-sm flex items-center justify-between px-margin-desktop h-16">
+<!-- Inner wrapper to offset for sidebar -->
+<div class="flex items-center justify-between w-full pl-[280px]">
+<!-- Left: Brand & Search -->
+<div class="flex items-center gap-8">
+<span class="font-headline-lg text-headline-lg font-bold text-primary dark:text-primary-fixed-dim tracking-tight">DevTrace</span>
+<div class="relative hidden md:block w-72">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full py-2 pl-10 pr-4 text-body-sm font-body-sm text-on-surface focus:ring-2 focus:ring-primary-container/20 transition-all placeholder:text-outline" placeholder="Search system resources..." type="text"/>
+</div>
+</div>
+<!-- Right: Actions & Profile -->
+<div class="flex items-center gap-2">
+<button class="p-2 text-on-surface-variant dark:text-outline hover:bg-secondary-container/20 dark:hover:bg-secondary-container/10 transition-colors cursor-pointer active:opacity-80 transition-all rounded-full">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant dark:text-outline hover:bg-secondary-container/20 dark:hover:bg-secondary-container/10 transition-colors cursor-pointer active:opacity-80 transition-all rounded-full mr-2">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="h-9 w-9 rounded-full overflow-hidden border border-outline-variant/30 cursor-pointer">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="A professional headshot of an IT systems administrator in a well-lit modern office space, shallow depth of field, high-end corporate photography style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCREbfCArkNArBRpRgNTdt1iBHSeoxGny4-xNnY6TyWDum_G6X-ea1Aan10Dc3WS2xSLhslvW2nJKwuiEYdZL81SpjJ8_eZ5rFzCH1KG3d6vBBOPE96eiZwZjZ0YXLVxCs5CEhHwEzAA9KHBKZAHJI6wWdarhEXo2t8givozpjTpPIglc23eVGiRdTdKFJUmuiU7FlU53YjKxLC3ZD_RkYuIFKi60fuLJGkfEG1Y6uVjBbrqVA9uPXMag"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-[280px] pt-16 min-h-screen bg-background relative z-10">
+<div class="p-margin-desktop max-w-7xl mx-auto">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+<div>
+<div class="flex items-center gap-2 text-on-surface-variant font-body-sm text-body-sm mb-1">
+<span class="hover:text-primary cursor-pointer transition-colors">Admin Console</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="hover:text-primary cursor-pointer transition-colors">Menu Options</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="text-primary font-medium">Register New</span>
+</div>
+<h1 class="font-display-lg text-display-lg text-on-surface tracking-tight">Configure Menu Entry</h1>
+</div>
+<div class="flex items-center gap-3">
+<button class="px-6 py-2.5 rounded-full font-body-md text-body-md text-primary bg-transparent border border-outline hover:bg-surface-container-low transition-colors duration-200">
+                        Cancel
+                    </button>
+<button class="px-6 py-2.5 rounded-full font-body-md text-body-md text-on-primary bg-primary-container hover:bg-primary transition-colors duration-200 shadow-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">save</span>
+                        Save Configuration
+                    </button>
+</div>
+</div>
+<!-- Complex Form Layout (Bento Grid Style) -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+<!-- Left Column (Core Details) -->
+<div class="xl:col-span-8 flex flex-col gap-6">
+<!-- General Information Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-[0_4px_20px_-2px_rgba(0,88,124,0.08)] overflow-hidden">
+<div class="px-6 py-4 border-b border-outline-variant bg-surface-bright/50">
+<h3 class="font-headline-md text-headline-md text-on-surface text-[18px]">Identity &amp; Destination</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Define the core labeling and routing for this menu item.</p>
+</div>
+<div class="p-6 flex flex-col gap-6">
+<!-- Input: Name -->
+<div>
+<label class="font-label-caps text-label-caps text-outline uppercase block mb-2 tracking-wider">Display Name</label>
+<input class="w-full bg-surface-bright border border-outline-variant rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-fixed-dim/30 transition-all placeholder:text-outline-variant" placeholder="e.g., Application Logs" type="text"/>
+</div>
+<!-- Input: Destination URL -->
+<div>
+<label class="font-label-caps text-label-caps text-outline uppercase block mb-2 tracking-wider">Target Path / URL</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">link</span>
+<input class="w-full bg-surface-bright border border-outline-variant rounded-lg pl-10 pr-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-fixed-dim/30 transition-all font-code-data text-code-data placeholder:text-outline-variant" placeholder="/admin/system/logs" type="text"/>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-2 text-[13px]">Use relative paths for internal routing (e.g., <code class="bg-surface-container-low px-1 rounded text-primary">/dashboard</code>) or absolute URLs for external links.</p>
+</div>
+</div>
+</div>
+<!-- Hierarchy & Permissions Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-[0_4px_20px_-2px_rgba(0,88,124,0.08)] overflow-hidden">
+<div class="px-6 py-4 border-b border-outline-variant bg-surface-bright/50">
+<h3 class="font-headline-md text-headline-md text-on-surface text-[18px]">Structural Hierarchy</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Determine where this option sits within the global navigation.</p>
+</div>
+<div class="p-6">
+<label class="font-label-caps text-label-caps text-outline uppercase block mb-2 tracking-wider">Parent Menu</label>
+<!-- Custom Select/Dropdown UI -->
+<div class="relative group cursor-pointer">
+<div class="w-full bg-surface-bright border border-outline-variant rounded-lg px-4 py-3 flex items-center justify-between group-hover:border-primary-container transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-6 h-6 rounded bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">folder</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface">Root Level (Top Navigation)</span>
+</div>
+<span class="material-symbols-outlined text-outline">expand_more</span>
+</div>
+<!-- Dropdown Menu (Hidden by default, shown on focus/click in real app) -->
+<div class="absolute top-full left-0 w-full mt-2 bg-surface-container-lowest border border-outline-variant rounded-xl shadow-lg z-20 hidden">
+<div class="p-2 flex flex-col gap-1 max-h-60 overflow-y-auto">
+<!-- Root -->
+<div class="px-3 py-2 hover:bg-secondary-fixed-dim/20 rounded-lg flex items-center gap-3 cursor-pointer bg-secondary-fixed-dim/10">
+<span class="material-symbols-outlined text-[18px] text-primary">folder</span>
+<span class="font-body-md text-body-md text-primary font-medium">Root Level (Top Navigation)</span>
+</div>
+<!-- Item 1 -->
+<div class="px-3 py-2 hover:bg-surface-container rounded-lg flex items-center gap-3 cursor-pointer pl-8">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">settings</span>
+<span class="font-body-md text-body-md text-on-surface">System Settings</span>
+</div>
+<!-- Item 2 -->
+<div class="px-3 py-2 hover:bg-surface-container rounded-lg flex items-center gap-3 cursor-pointer pl-8">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">security</span>
+<span class="font-body-md text-body-md text-on-surface">Access Control</span>
+</div>
+<!-- Item 3 -->
+<div class="px-3 py-2 hover:bg-surface-container rounded-lg flex items-center gap-3 cursor-pointer pl-14 relative before:absolute before:left-10 before:top-1/2 before:w-3 before:h-[1px] before:bg-outline-variant">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">manage_accounts</span>
+<span class="font-body-md text-body-md text-on-surface">Role Management</span>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-4 flex items-center gap-2 bg-surface-container-low px-4 py-3 rounded-lg border border-outline-variant/50">
+<span class="material-symbols-outlined text-secondary text-[20px]">info</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Selecting "Root Level" will display this option on the primary SideNavBar.</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column (Visuals & Preview) -->
+<div class="xl:col-span-4 flex flex-col gap-6">
+<!-- Icon Selection Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-[0_4px_20px_-2px_rgba(0,88,124,0.08)] overflow-hidden flex flex-col h-[400px]">
+<div class="px-6 py-4 border-b border-outline-variant bg-surface-bright/50 flex justify-between items-center shrink-0">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface text-[18px]">Visual Identity</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Select a Material Symbol.</p>
+</div>
+<div class="w-10 h-10 rounded-full bg-secondary-fixed-dim/30 flex items-center justify-center border border-secondary-fixed">
+<span class="material-symbols-outlined text-primary-container text-[22px]">widgets</span>
+</div>
+</div>
+<!-- Search Icons -->
+<div class="p-4 border-b border-outline-variant/50 shrink-0">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
+<input class="w-full bg-surface-bright border border-outline-variant rounded-lg py-2 pl-9 pr-4 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all" placeholder="Search symbols..." type="text"/>
+</div>
+</div>
+<!-- Icon Grid -->
+<div class="p-4 overflow-y-auto grid grid-cols-5 gap-2 content-start flex-1">
+<!-- Active Icon -->
+<div class="aspect-square rounded-lg bg-secondary-fixed flex items-center justify-center border border-primary-container/30 cursor-pointer shadow-sm">
+<span class="material-symbols-outlined icon-filled text-primary-container text-[24px]">widgets</span>
+</div>
+<!-- Inactive Icons -->
+<div class="aspect-square rounded-lg bg-surface-bright hover:bg-surface-container-highest flex items-center justify-center border border-transparent hover:border-outline-variant/50 cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant text-[24px]">database</span>
+</div>
+<div class="aspect-square rounded-lg bg-surface-bright hover:bg-surface-container-highest flex items-center justify-center border border-transparent hover:border-outline-variant/50 cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant text-[24px]">api</span>
+</div>
+<div class="aspect-square rounded-lg bg-surface-bright hover:bg-surface-container-highest flex items-center justify-center border border-transparent hover:border-outline-variant/50 cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant text-[24px]">monitoring</span>
+</div>
+<div class="aspect-square rounded-lg bg-surface-bright hover:bg-surface-container-highest flex items-center justify-center border border-transparent hover:border-outline-variant/50 cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant text-[24px]">hub</span>
+</div>
+<div class="aspect-square rounded-lg bg-surface-bright hover:bg-surface-container-highest flex items-center justify-center border border-transparent hover:border-outline-variant/50 cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant text-[24px]">terminal</span>
+</div>
+<div class="aspect-square rounded-lg bg-surface-bright hover:bg-surface-container-highest flex items-center justify-center border border-transparent hover:border-outline-variant/50 cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant text-[24px]">memory</span>
+</div>
+<div class="aspect-square rounded-lg bg-surface-bright hover:bg-surface-container-highest flex items-center justify-center border border-transparent hover:border-outline-variant/50 cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant text-[24px]">dns</span>
+</div>
+<div class="aspect-square rounded-lg bg-surface-bright hover:bg-surface-container-highest flex items-center justify-center border border-transparent hover:border-outline-variant/50 cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant text-[24px]">cloud</span>
+</div>
+<div class="aspect-square rounded-lg bg-surface-bright hover:bg-surface-container-highest flex items-center justify-center border border-transparent hover:border-outline-variant/50 cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant text-[24px]">lock</span>
+</div>
+<div class="aspect-square rounded-lg bg-surface-bright hover:bg-surface-container-highest flex items-center justify-center border border-transparent hover:border-outline-variant/50 cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant text-[24px]">key</span>
+</div>
+<div class="aspect-square rounded-lg bg-surface-bright hover:bg-surface-container-highest flex items-center justify-center border border-transparent hover:border-outline-variant/50 cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant text-[24px]">shield</span>
+</div>
+<div class="aspect-square rounded-lg bg-surface-bright hover:bg-surface-container-highest flex items-center justify-center border border-transparent hover:border-outline-variant/50 cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant text-[24px]">policy</span>
+</div>
+<div class="aspect-square rounded-lg bg-surface-bright hover:bg-surface-container-highest flex items-center justify-center border border-transparent hover:border-outline-variant/50 cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant text-[24px]">code</span>
+</div>
+<div class="aspect-square rounded-lg bg-surface-bright hover:bg-surface-container-highest flex items-center justify-center border border-transparent hover:border-outline-variant/50 cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant text-[24px]">bug_report</span>
+</div>
+</div>
+<div class="p-3 border-t border-outline-variant/30 bg-surface-container-lowest text-center shrink-0">
+<span class="font-code-data text-code-data text-outline text-[11px]">Selected: <span class="text-primary-container font-semibold">widgets</span></span>
+</div>
+</div>
+<!-- Live Preview Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-[0_4px_20px_-2px_rgba(0,88,124,0.08)] overflow-hidden">
+<div class="px-6 py-4 border-b border-outline-variant bg-surface-bright/50">
+<h3 class="font-headline-md text-headline-md text-on-surface text-[18px]">Live Preview</h3>
+</div>
+<div class="p-6 bg-surface dark:bg-surface-dim relative overflow-hidden">
+<!-- Faux Sidebar Background -->
+<div class="absolute inset-0 bg-surface dark:bg-surface-dim opacity-50"></div>
+<!-- The Preview Item -->
+<div class="relative z-10 w-full max-w-[240px] mx-auto border border-outline-variant/30 rounded-xl p-2 bg-surface-container-lowest shadow-sm">
+<p class="font-label-caps text-label-caps text-outline mb-2 px-2">How it appears</p>
+<!-- Active State Preview -->
+<div class="flex items-center gap-3 bg-secondary-container/20 text-primary font-semibold rounded-lg px-4 py-3 relative before:absolute before:left-0 before:w-1 before:h-2/3 before:bg-primary before:rounded-full">
+<span class="material-symbols-outlined icon-filled text-[20px]">widgets</span>
+<span class="font-body-md text-body-md font-semibold truncate">Application Logs</span>
+</div>
+<!-- Inactive State Preview (just for context) -->
+<div class="flex items-center gap-3 text-on-surface-variant px-4 py-3 mt-1 rounded-lg opacity-60">
+<span class="material-symbols-outlined text-[20px]">widgets</span>
+<span class="font-body-md text-body-md truncate">Application Logs</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

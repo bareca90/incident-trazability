@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DevTrace - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Geist:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-tint": "#1b6489",
+                        "error-container": "#ffdad6",
+                        "surface-variant": "#e0e3e5",
+                        "secondary": "#45636d",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed-variant": "#2d4b55",
+                        "tertiary-container": "#a9000f",
+                        "tertiary": "#7d0008",
+                        "on-surface": "#191c1e",
+                        "inverse-surface": "#2d3133",
+                        "tertiary-fixed": "#ffdad6",
+                        "on-surface-variant": "#40484e",
+                        "on-secondary-fixed": "#001f28",
+                        "tertiary-fixed-dim": "#ffb4ab",
+                        "on-tertiary-container": "#ffb3aa",
+                        "surface-container-low": "#f2f4f6",
+                        "error": "#ba1a1a",
+                        "on-primary": "#ffffff",
+                        "surface-container-highest": "#e0e3e5",
+                        "primary": "#00405b",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#8fcef7",
+                        "outline": "#70787e",
+                        "on-secondary-container": "#4b6973",
+                        "surface-bright": "#f7f9fb",
+                        "on-tertiary-fixed-variant": "#93000b",
+                        "on-primary-fixed-variant": "#004c6c",
+                        "on-primary-container": "#8fcdf6",
+                        "primary-container": "#00587c",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed": "#410002",
+                        "primary-fixed-dim": "#8fcef7",
+                        "primary-fixed": "#c7e7ff",
+                        "surface-container-lowest": "#ffffff",
+                        "background": "#f7f9fb",
+                        "surface-container": "#eceef0",
+                        "secondary-fixed-dim": "#accbd8",
+                        "on-background": "#191c1e",
+                        "secondary-fixed": "#c8e8f4",
+                        "on-error": "#ffffff",
+                        "surface": "#f7f9fb",
+                        "outline-variant": "#c0c7cf",
+                        "on-primary-fixed": "#001e2e",
+                        "secondary-container": "#c8e8f4",
+                        "inverse-on-surface": "#eff1f3",
+                        "surface-dim": "#d8dadc",
+                        "surface-container-high": "#e6e8ea"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "gutter": "24px",
+                        "xs": "4px",
+                        "xl": "40px",
+                        "sm": "8px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "32px",
+                        "base": "4px",
+                        "md": "16px",
+                        "lg": "24px"
+                    },
+                    fontFamily: {
+                        "headline-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "code-data": ["Geist"],
+                        "body-lg": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"]
+                    },
+                    fontSize: {
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "code-data": ["13px", { "lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "letterSpacing": "0em", "fontWeight": "400" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "400" }]
+                    },
+                    boxShadow: {
+                        'level-1': '0 4px 20px -2px rgba(0, 88, 124, 0.08)',
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #c0c7cf; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased min-h-screen overflow-x-hidden">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-40 bg-surface/95 dark:bg-surface-container/95 backdrop-blur-md border-b border-outline-variant/30 shadow-sm flex items-center justify-between px-margin-desktop h-16 w-full pl-[312px]">
+<div class="flex items-center gap-4 w-1/3">
+<div class="relative w-full max-w-md group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">search</span>
+<input class="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-xl py-2 pl-10 pr-4 font-body-sm text-body-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-secondary-fixed-dim/30 transition-all placeholder:text-outline" placeholder="Search incidents, logs, users..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-secondary-container/20 transition-colors cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-secondary-container/20 transition-colors cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-secondary-fixed-dim overflow-hidden ml-2 cursor-pointer border border-outline-variant/20 hover:ring-2 ring-primary ring-offset-2 ring-offset-surface transition-all">
+<img alt="User profile avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuChR_9Zawx2Oh_hAEcONufc_7p438qHaY43nY5xa-r0zgw81BxYS_rpMfFVdnwAU58modwOm1-ES3jdKNKqlWY_M0KCjK8fXtVd9gATViM23H1RdZFvbADqADxJInvS_4kVcQWb2fLYQUIntm1-_nVOVFnMiMmC6Yc1t2TSuV_b8xJzskpOKTAO-m-h60WcN0fG6hoNAww9xIWupP-ohcRvXbj8_5MilkXyxIsNeUOIBc2xmx0XoHbWCA"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-full w-[280px] z-50 bg-surface border-r border-outline-variant/30 shadow-sm flex flex-col gap-2 p-md h-full text-primary font-body-md text-body-md">
+<div class="flex items-center gap-3 mb-6 px-4 py-2">
+<div class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-on-primary font-bold shadow-md">
+                DT
+            </div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary tracking-tight">DevTrace</h1>
+<p class="font-body-sm text-body-sm text-outline">DevTrace Enterprise</p>
+</div>
+</div>
+<div class="px-4 mb-4">
+<div class="bg-surface-container-low rounded-lg p-3 flex items-center gap-2 border border-outline-variant/20">
+<div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">System Status: Healthy</span>
+</div>
+</div>
+<div class="flex flex-col gap-1 flex-1 overflow-y-auto custom-scrollbar">
+<!-- Active Tab -->
+<a class="flex items-center gap-3 bg-secondary-container/20 text-primary font-semibold rounded-lg px-4 py-3 relative before:absolute before:left-0 before:w-1 before:h-2/3 before:bg-primary before:rounded-full cursor-pointer active:scale-[0.98] transition-transform" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+<!-- Inactive Tabs -->
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:text-primary hover:bg-surface-container-low transition-all duration-200 cursor-pointer rounded-lg" href="#">
+<span class="material-symbols-outlined">group</span>
+                Users
+            </a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:text-primary hover:bg-surface-container-low transition-all duration-200 cursor-pointer rounded-lg" href="#">
+<span class="material-symbols-outlined">security</span>
+                Roles
+            </a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:text-primary hover:bg-surface-container-low transition-all duration-200 cursor-pointer rounded-lg" href="#">
+<span class="material-symbols-outlined">menu_open</span>
+                Menu Options
+            </a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:text-primary hover:bg-surface-container-low transition-all duration-200 cursor-pointer rounded-lg" href="#">
+<span class="material-symbols-outlined">error</span>
+                Incidents
+            </a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:text-primary hover:bg-surface-container-low transition-all duration-200 cursor-pointer rounded-lg" href="#">
+<span class="material-symbols-outlined">history</span>
+                Logs
+            </a>
+</div>
+<div class="mt-auto pt-4 border-t border-outline-variant/30 flex flex-col gap-1">
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:text-primary hover:bg-surface-container-low transition-all duration-200 cursor-pointer rounded-lg" href="#">
+<span class="material-symbols-outlined">help</span>
+                Support
+            </a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:text-primary hover:bg-surface-container-low transition-all duration-200 cursor-pointer rounded-lg" href="#">
+<span class="material-symbols-outlined">description</span>
+                Documentation
+            </a>
+<div class="flex items-center gap-3 mt-2 px-4 py-2">
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/30">
+<img alt="System Administrator" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDK0mMQrm91OMgnch6eoGCIvtC8wYq9GR9rE2ShiktJIN9myrRJDl5tGP18i8l81R9dswZzM_RzcMt_GlfsFsbzuI84LbZvXZbHG16L9ILi3mPz5BIgksXJ0HmGQEL0UGTKOzgya-tOQCPLDMoQJbAS987Dg2wjvGKlmsEqDx2YW-5SwQ9kx5okUCRrq1OckzQSB9PRMsLG6IcabfbAeYjMXzRpJkEzN8fS4XYzWfHNnAbjfDVKJqQ7qQ"/>
+</div>
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm font-semibold">Admin User</span>
+<span class="font-label-caps text-label-caps text-outline">System Administrator</span>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="ml-[280px] mt-16 p-margin-desktop min-h-[calc(100vh-64px)] bg-background">
+<div class="flex justify-between items-end mb-8">
+<div>
+<h2 class="font-headline-lg text-headline-lg font-bold text-primary tracking-tight">Traceability Overview</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Real-time system health and incident metrics.</p>
+</div>
+<button class="bg-primary-container text-on-primary font-body-sm text-body-sm font-semibold py-2 px-4 rounded-full shadow-md hover:opacity-90 transition-opacity flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                Export Report
+            </button>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-gutter">
+<!-- KPI Cards -->
+<div class="bg-surface-container-lowest rounded-xl p-lg border border-outline-variant/30 shadow-level-1 relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-32 h-32 bg-error-container/20 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-error-container/40 transition-all duration-500"></div>
+<div class="flex justify-between items-start relative z-10">
+<span class="font-label-caps text-label-caps text-on-surface-variant tracking-wider uppercase">Active Incidents</span>
+<span class="material-symbols-outlined text-error">warning</span>
+</div>
+<div class="mt-4 relative z-10">
+<span class="font-display-lg text-display-lg font-bold text-on-surface">24</span>
+<span class="font-body-sm text-body-sm text-error ml-2 flex items-center inline-flex font-semibold">
+<span class="material-symbols-outlined text-[16px]">arrow_upward</span> 12%
+                    </span>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-lg border border-outline-variant/30 shadow-level-1 relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary-container/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-primary-container/20 transition-all duration-500"></div>
+<div class="flex justify-between items-start relative z-10">
+<span class="font-label-caps text-label-caps text-on-surface-variant tracking-wider uppercase">Online Users</span>
+<span class="material-symbols-outlined text-primary-container">group</span>
+</div>
+<div class="mt-4 relative z-10">
+<span class="font-display-lg text-display-lg font-bold text-on-surface">1,492</span>
+<span class="font-body-sm text-body-sm text-emerald-600 ml-2 flex items-center inline-flex font-semibold">
+<span class="material-symbols-outlined text-[16px]">arrow_upward</span> 4%
+                    </span>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-lg border border-outline-variant/30 shadow-level-1 relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-32 h-32 bg-secondary-fixed-dim/30 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-secondary-fixed-dim/50 transition-all duration-500"></div>
+<div class="flex justify-between items-start relative z-10">
+<span class="font-label-caps text-label-caps text-on-surface-variant tracking-wider uppercase">Resolution Rate</span>
+<span class="material-symbols-outlined text-secondary">check_circle</span>
+</div>
+<div class="mt-4 relative z-10">
+<span class="font-display-lg text-display-lg font-bold text-on-surface">94%</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant ml-2 font-semibold">Target: 99%</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-lg border border-outline-variant/30 shadow-level-1 relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-32 h-32 bg-surface-variant/40 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-surface-variant/60 transition-all duration-500"></div>
+<div class="flex justify-between items-start relative z-10">
+<span class="font-label-caps text-label-caps text-on-surface-variant tracking-wider uppercase">Logs / Min</span>
+<span class="material-symbols-outlined text-on-surface-variant">data_usage</span>
+</div>
+<div class="mt-4 relative z-10">
+<span class="font-display-lg text-display-lg font-bold text-on-surface">8.4k</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant ml-2 font-semibold">Stable</span>
+</div>
+</div>
+</div>
+<!-- Charts Section -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-gutter">
+<!-- Line Chart Area -->
+<div class="md:col-span-2 bg-surface-container-lowest rounded-xl p-lg border border-outline-variant/30 shadow-level-1 flex flex-col h-[400px]">
+<div class="flex justify-between items-center mb-6 pb-4 border-b border-outline-variant/20">
+<h3 class="font-headline-md text-headline-md font-semibold text-primary">System Incident Trends</h3>
+<div class="flex gap-2 bg-surface-container-low rounded-lg p-1">
+<button class="px-3 py-1 rounded-md text-body-sm font-semibold bg-surface-container-lowest shadow-sm text-primary">24h</button>
+<button class="px-3 py-1 rounded-md text-body-sm font-semibold text-on-surface-variant hover:text-primary transition-colors">7d</button>
+<button class="px-3 py-1 rounded-md text-body-sm font-semibold text-on-surface-variant hover:text-primary transition-colors">30d</button>
+</div>
+</div>
+<!-- CSS Simulated Line Chart -->
+<div class="flex-1 relative flex items-end justify-between px-2 pb-6 pt-10">
+<!-- Grid Lines -->
+<div class="absolute inset-0 flex flex-col justify-between pt-10 pb-6 z-0">
+<div class="w-full border-t border-outline-variant/10"></div>
+<div class="w-full border-t border-outline-variant/10"></div>
+<div class="w-full border-t border-outline-variant/10"></div>
+<div class="w-full border-t border-outline-variant/10"></div>
+<div class="w-full border-t border-outline-variant/10"></div>
+</div>
+<!-- Data Points / Line approximation -->
+<div class="relative w-full h-full z-10 flex items-end">
+<svg class="w-full h-full overflow-visible" preserveaspectratio="none" viewbox="0 0 100 100">
+<defs>
+<lineargradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#00587C" stop-opacity="0.2"></stop>
+<stop offset="100%" stop-color="#00587C" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<path d="M0,80 Q10,60 20,70 T40,40 T60,50 T80,20 T100,30 L100,100 L0,100 Z" fill="url(#chartGradient)"></path>
+<path d="M0,80 Q10,60 20,70 T40,40 T60,50 T80,20 T100,30" fill="none" stroke="#00587C" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
+<!-- Points -->
+<circle cx="20" cy="70" fill="#ffffff" r="2.5" stroke="#00587C" stroke-width="1.5"></circle>
+<circle cx="40" cy="40" fill="#ffffff" r="2.5" stroke="#00587C" stroke-width="1.5"></circle>
+<circle cx="60" cy="50" fill="#ffffff" r="2.5" stroke="#00587C" stroke-width="1.5"></circle>
+<circle cx="80" cy="20" fill="#ffffff" r="2.5" stroke="#00587C" stroke-width="1.5"></circle>
+<circle cx="100" cy="30" fill="#ffffff" r="2.5" stroke="#00587C" stroke-width="1.5"></circle>
+</svg>
+</div>
+<!-- X Axis Labels -->
+<div class="absolute bottom-0 w-full flex justify-between text-label-caps text-outline px-2">
+<span>00:00</span>
+<span>06:00</span>
+<span>12:00</span>
+<span>18:00</span>
+<span>24:00</span>
+</div>
+</div>
+</div>
+<!-- Bar Chart Area -->
+<div class="bg-surface-container-lowest rounded-xl p-lg border border-outline-variant/30 shadow-level-1 flex flex-col h-[400px]">
+<div class="mb-6 pb-4 border-b border-outline-variant/20">
+<h3 class="font-headline-md text-headline-md font-semibold text-primary">Resolution by Tier</h3>
+</div>
+<div class="flex-1 flex items-end justify-between px-4 pb-6 pt-4 gap-4">
+<!-- Bars -->
+<div class="flex flex-col items-center gap-2 w-full group">
+<div class="w-full bg-surface-container-low rounded-t-lg flex items-end h-[200px]">
+<div class="w-full bg-secondary-fixed-dim rounded-t-lg group-hover:bg-secondary-fixed transition-colors" style="height: 45%;"></div>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">L1</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-full group">
+<div class="w-full bg-surface-container-low rounded-t-lg flex items-end h-[200px]">
+<div class="w-full bg-primary-container rounded-t-lg group-hover:opacity-80 transition-opacity" style="height: 75%;"></div>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">L2</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-full group">
+<div class="w-full bg-surface-container-low rounded-t-lg flex items-end h-[200px]">
+<div class="w-full bg-secondary rounded-t-lg group-hover:opacity-80 transition-opacity" style="height: 30%;"></div>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">L3</span>
+</div>
+</div>
+<div class="mt-auto flex justify-center gap-4 text-label-caps">
+<div class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-secondary-fixed-dim"></span> Minor</div>
+<div class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-primary-container"></span> Major</div>
+<div class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-secondary"></span> Critical</div>
+</div>
+</div>
+</div>
+<!-- Recent Logs Table -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-level-1 overflow-hidden">
+<div class="p-lg border-b border-outline-variant/20 flex justify-between items-center">
+<h3 class="font-headline-md text-headline-md font-semibold text-primary">Recent Logs</h3>
+<button class="text-primary-container font-body-sm font-semibold hover:underline flex items-center gap-1">View All <span class="material-symbols-outlined text-[16px]">arrow_forward</span></button>
+</div>
+<div class="w-full overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-outline-variant/30 bg-surface-bright">
+<th class="py-3 px-5 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Timestamp</th>
+<th class="py-3 px-5 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Trace ID</th>
+<th class="py-3 px-5 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Service</th>
+<th class="py-3 px-5 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Status</th>
+<th class="py-3 px-5 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Message</th>
+</tr>
+</thead>
+<tbody class="font-code-data text-code-data">
+<tr class="border-b border-outline-variant/10 hover:bg-surface-container-low transition-colors cursor-pointer group">
+<td class="py-3 px-5 text-on-surface-variant">2023-10-27 14:32:01</td>
+<td class="py-3 px-5 text-primary group-hover:underline">#trc-8a9f2c</td>
+<td class="py-3 px-5 text-on-surface">auth-service</td>
+<td class="py-3 px-5">
+<span class="px-2 py-1 rounded-md bg-error-container/50 text-error text-[11px] font-bold tracking-wide uppercase border border-error/20">Error</span>
+</td>
+<td class="py-3 px-5 text-on-surface-variant truncate max-w-xs">JWT signature validation failed for user context.</td>
+</tr>
+<tr class="border-b border-outline-variant/10 hover:bg-surface-container-low transition-colors cursor-pointer group">
+<td class="py-3 px-5 text-on-surface-variant">2023-10-27 14:31:55</td>
+<td class="py-3 px-5 text-primary group-hover:underline">#trc-7b1e4a</td>
+<td class="py-3 px-5 text-on-surface">payment-gateway</td>
+<td class="py-3 px-5">
+<span class="px-2 py-1 rounded-md bg-emerald-100 text-emerald-800 text-[11px] font-bold tracking-wide uppercase border border-emerald-200">Info</span>
+</td>
+<td class="py-3 px-5 text-on-surface-variant truncate max-w-xs">Transaction completed successfully. Latency: 45ms.</td>
+</tr>
+<tr class="border-b border-outline-variant/10 hover:bg-surface-container-low transition-colors cursor-pointer group">
+<td class="py-3 px-5 text-on-surface-variant">2023-10-27 14:30:12</td>
+<td class="py-3 px-5 text-primary group-hover:underline">#trc-9c0d5b</td>
+<td class="py-3 px-5 text-on-surface">database-cluster</td>
+<td class="py-3 px-5">
+<span class="px-2 py-1 rounded-md bg-amber-100 text-amber-800 text-[11px] font-bold tracking-wide uppercase border border-amber-200">Warn</span>
+</td>
+<td class="py-3 px-5 text-on-surface-variant truncate max-w-xs">Query execution time exceeded threshold (200ms).</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors cursor-pointer group">
+<td class="py-3 px-5 text-on-surface-variant">2023-10-27 14:28:44</td>
+<td class="py-3 px-5 text-primary group-hover:underline">#trc-1f2a3e</td>
+<td class="py-3 px-5 text-on-surface">user-profile-api</td>
+<td class="py-3 px-5">
+<span class="px-2 py-1 rounded-md bg-emerald-100 text-emerald-800 text-[11px] font-bold tracking-wide uppercase border border-emerald-200">Info</span>
+</td>
+<td class="py-3 px-5 text-on-surface-variant truncate max-w-xs">Cache miss for user_id: 8492. Fetching from primary DB.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+</body></html>

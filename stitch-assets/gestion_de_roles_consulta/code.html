@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DevTrace - Roles</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Geist:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-tint": "#1b6489",
+                      "error-container": "#ffdad6",
+                      "surface-variant": "#e0e3e5",
+                      "secondary": "#45636d",
+                      "on-secondary": "#ffffff",
+                      "on-secondary-fixed-variant": "#2d4b55",
+                      "tertiary-container": "#a9000f",
+                      "tertiary": "#7d0008",
+                      "on-surface": "#191c1e",
+                      "inverse-surface": "#2d3133",
+                      "tertiary-fixed": "#ffdad6",
+                      "on-surface-variant": "#40484e",
+                      "on-secondary-fixed": "#001f28",
+                      "tertiary-fixed-dim": "#ffb4ab",
+                      "on-tertiary-container": "#ffb3aa",
+                      "surface-container-low": "#f2f4f6",
+                      "error": "#ba1a1a",
+                      "on-primary": "#ffffff",
+                      "surface-container-highest": "#e0e3e5",
+                      "primary": "#00405b",
+                      "on-error-container": "#93000a",
+                      "inverse-primary": "#8fcef7",
+                      "outline": "#70787e",
+                      "on-secondary-container": "#4b6973",
+                      "surface-bright": "#f7f9fb",
+                      "on-tertiary-fixed-variant": "#93000b",
+                      "on-primary-fixed-variant": "#004c6c",
+                      "on-primary-container": "#8fcdf6",
+                      "primary-container": "#00587c",
+                      "on-tertiary": "#ffffff",
+                      "on-tertiary-fixed": "#410002",
+                      "primary-fixed-dim": "#8fcef7",
+                      "primary-fixed": "#c7e7ff",
+                      "surface-container-lowest": "#ffffff",
+                      "background": "#f7f9fb",
+                      "surface-container": "#eceef0",
+                      "secondary-fixed-dim": "#accbd8",
+                      "on-background": "#191c1e",
+                      "secondary-fixed": "#c8e8f4",
+                      "on-error": "#ffffff",
+                      "surface": "#f7f9fb",
+                      "outline-variant": "#c0c7cf",
+                      "on-primary-fixed": "#001e2e",
+                      "secondary-container": "#c8e8f4",
+                      "inverse-on-surface": "#eff1f3",
+                      "surface-dim": "#d8dadc",
+                      "surface-container-high": "#e6e8ea"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "gutter": "24px",
+                      "xs": "4px",
+                      "xl": "40px",
+                      "sm": "8px",
+                      "margin-mobile": "16px",
+                      "margin-desktop": "32px",
+                      "base": "4px",
+                      "md": "16px",
+                      "lg": "24px"
+              },
+              "fontFamily": {
+                      "headline-md": ["Inter"],
+                      "display-lg": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "code-data": ["Geist"],
+                      "body-lg": ["Inter"],
+                      "label-caps": ["Inter"],
+                      "body-md": ["Inter"],
+                      "body-sm": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "code-data": ["13px", {"lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "letterSpacing": "0em", "fontWeight": "400"}],
+                      "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400"}],
+                      "body-sm": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "400"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        .custom-shadow { box-shadow: 0 4px 20px -2px rgba(0, 88, 124, 0.08); }
+        .table-row-hover:hover { background-color: #F1F5F9; }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md antialiased overflow-hidden selection:bg-primary-container selection:text-on-primary-container">
+<!-- App Container -->
+<div class="flex h-screen w-full">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col fixed left-0 top-0 h-full w-[280px] z-50 bg-surface dark:bg-surface-dim border-r border-outline-variant/30 dark:border-outline/20 shadow-sm dark:shadow-none p-md">
+<!-- Header -->
+<div class="mb-lg px-4 pt-4">
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">DevTrace</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-1">Admin Console</div>
+</div>
+<!-- Main Nav Tabs -->
+<div class="flex flex-col gap-2 flex-1 overflow-y-auto">
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline px-4 py-3 hover:text-primary dark:hover:text-primary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-all duration-200 cursor-pointer active:scale-[0.98] rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline px-4 py-3 hover:text-primary dark:hover:text-primary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-all duration-200 cursor-pointer active:scale-[0.98] rounded-lg" href="#">
+<span class="material-symbols-outlined">group</span>
+<span>Users</span>
+</a>
+<!-- Active Tab: Roles -->
+<a class="flex items-center gap-3 bg-secondary-container/20 text-primary dark:text-primary-fixed-dim font-semibold rounded-lg px-4 py-3 relative before:absolute before:left-0 before:w-1 before:h-2/3 before:bg-primary before:rounded-full cursor-pointer active:scale-[0.98] transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">security</span>
+<span>Roles</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline px-4 py-3 hover:text-primary dark:hover:text-primary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-all duration-200 cursor-pointer active:scale-[0.98] rounded-lg" href="#">
+<span class="material-symbols-outlined">menu_open</span>
+<span>Menu Options</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline px-4 py-3 hover:text-primary dark:hover:text-primary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-all duration-200 cursor-pointer active:scale-[0.98] rounded-lg" href="#">
+<span class="material-symbols-outlined">error</span>
+<span>Incidents</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline px-4 py-3 hover:text-primary dark:hover:text-primary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-all duration-200 cursor-pointer active:scale-[0.98] rounded-lg" href="#">
+<span class="material-symbols-outlined">history</span>
+<span>Logs</span>
+</a>
+</div>
+<!-- Footer Tabs & CTA -->
+<div class="mt-auto flex flex-col gap-2 border-t border-outline-variant/30 pt-4">
+<div class="px-4 pb-2">
+<span class="inline-flex items-center gap-2 font-label-caps text-label-caps text-secondary">
+<span class="w-2 h-2 rounded-full bg-[#10B981]"></span>
+                        System Status: Healthy
+                    </span>
+</div>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline px-4 py-3 hover:text-primary dark:hover:text-primary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-all duration-200 cursor-pointer active:scale-[0.98] rounded-lg" href="#">
+<span class="material-symbols-outlined">help</span>
+<span>Support</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant dark:text-outline px-4 py-3 hover:text-primary dark:hover:text-primary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-high transition-all duration-200 cursor-pointer active:scale-[0.98] rounded-lg" href="#">
+<span class="material-symbols-outlined">description</span>
+<span>Documentation</span>
+</a>
+</div>
+</nav>
+<!-- Main Workspace -->
+<main class="flex-1 flex flex-col w-full md:pl-[280px] min-h-screen">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full md:w-[calc(100%-280px)] z-40 bg-surface/95 dark:bg-surface-container/95 backdrop-blur-md border-b border-outline-variant/30 dark:border-outline/20 shadow-sm flex items-center justify-between px-margin-desktop h-16">
+<!-- Left: Search Bar -->
+<div class="flex-1 flex items-center">
+<div class="relative w-full max-w-md group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline-variant group-focus-within:text-primary transition-colors pointer-events-none">search</span>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-xl pl-10 pr-4 py-2 font-body-sm text-body-sm text-on-surface placeholder:text-outline-variant focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-fixed-dim/30 transition-all" placeholder="Search resources..." type="text"/>
+</div>
+</div>
+<!-- Right: Actions -->
+<div class="flex items-center gap-sm">
+<button class="p-2 rounded-full text-on-surface-variant hover:bg-secondary-container/20 transition-colors cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 rounded-full text-on-surface-variant hover:bg-secondary-container/20 transition-colors cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="ml-4 h-8 w-8 rounded-full bg-primary-container overflow-hidden cursor-pointer hover:opacity-90 transition-opacity">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="A small circular avatar image for a user profile, featuring professional corporate colors." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwKkc8gSAg2qxFAPn_gT8zmB1HZY9hNBFoCrjWUSgMj1KvH4u28-oK9ExtFha8ETLADJLhn9xac-b95ztxnAV2MCDH4I6W9fqJnQcG-BpmZj619tRpxhSj0V013ly9oPKdv9p70Zcj5Q3f4dykUPI2ZMgGmXJRh6QszaOp-h-sNbp2g7YxJzAC3G2p82c80EKFGsQN-YLOB11eznWVLAkigM9--2G0l9qxRD-ZZzgXawnk9aVyWi311g"/>
+</div>
+</div>
+</header>
+<!-- Canvas Content -->
+<div class="flex-1 overflow-y-auto mt-16 p-margin-mobile md:p-margin-desktop">
+<!-- Page Header -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between mb-lg gap-4">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Consulta de Roles</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Gestione los perfiles de acceso y permisos dentro del sistema DevTrace.</p>
+</div>
+<button class="inline-flex items-center justify-center gap-2 bg-primary text-on-primary font-body-sm text-body-sm font-medium px-5 py-2.5 rounded-full hover:bg-primary-container transition-colors shadow-sm whitespace-nowrap">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                        Nuevo Rol
+                    </button>
+</div>
+<!-- Data Table Card -->
+<div class="bg-surface-container-lowest border border-surface-variant rounded-xl custom-shadow overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-surface-variant bg-surface-bright">
+<th class="font-label-caps text-label-caps text-on-surface-variant uppercase py-4 px-5">Rol</th>
+<th class="font-label-caps text-label-caps text-on-surface-variant uppercase py-4 px-5">Descripción</th>
+<th class="font-label-caps text-label-caps text-on-surface-variant uppercase py-4 px-5 text-right">Usuarios</th>
+<th class="font-label-caps text-label-caps text-on-surface-variant uppercase py-4 px-5">Última Modificación</th>
+<th class="font-label-caps text-label-caps text-on-surface-variant uppercase py-4 px-5 text-center">Acciones</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-variant">
+<!-- Row 1 -->
+<tr class="table-row-hover transition-colors group">
+<td class="py-3 px-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-error-container/30 flex items-center justify-center text-error">
+<span class="material-symbols-outlined text-[18px]">shield_person</span>
+</div>
+<span class="font-body-md text-body-md font-medium text-on-surface">Administrator</span>
+</div>
+</td>
+<td class="py-3 px-5 font-body-sm text-body-sm text-on-surface-variant max-w-xs truncate">Acceso total a todas las configuraciones del sistema, gestión de usuarios y auditorías.</td>
+<td class="py-3 px-5 font-code-data text-code-data text-right">3</td>
+<td class="py-3 px-5 font-body-sm text-body-sm text-on-surface-variant">12 Oct 2023</td>
+<td class="py-3 px-5 text-center">
+<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 rounded-md text-secondary hover:bg-secondary-container hover:text-on-secondary-container transition-colors" title="Editar">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-md text-outline hover:bg-error-container hover:text-error transition-colors" title="Eliminar">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="table-row-hover transition-colors group">
+<td class="py-3 px-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-primary-fixed/50 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">code</span>
+</div>
+<span class="font-body-md text-body-md font-medium text-on-surface">Developer</span>
+</div>
+</td>
+<td class="py-3 px-5 font-body-sm text-body-sm text-on-surface-variant max-w-xs truncate">Acceso a repositorios, pipelines de CI/CD y gestión de incidentes técnicos.</td>
+<td class="py-3 px-5 font-code-data text-code-data text-right">42</td>
+<td class="py-3 px-5 font-body-sm text-body-sm text-on-surface-variant">28 Sep 2023</td>
+<td class="py-3 px-5 text-center">
+<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 rounded-md text-secondary hover:bg-secondary-container hover:text-on-secondary-container transition-colors" title="Editar">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-md text-outline hover:bg-error-container hover:text-error transition-colors" title="Eliminar">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="table-row-hover transition-colors group">
+<td class="py-3 px-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-secondary-fixed/50 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">policy</span>
+</div>
+<span class="font-body-md text-body-md font-medium text-on-surface">Auditor</span>
+</div>
+</td>
+<td class="py-3 px-5 font-body-sm text-body-sm text-on-surface-variant max-w-xs truncate">Acceso de solo lectura a registros del sistema, historial de cambios y reportes de cumplimiento.</td>
+<td class="py-3 px-5 font-code-data text-code-data text-right">12</td>
+<td class="py-3 px-5 font-body-sm text-body-sm text-on-surface-variant">05 Sep 2023</td>
+<td class="py-3 px-5 text-center">
+<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 rounded-md text-secondary hover:bg-secondary-container hover:text-on-secondary-container transition-colors" title="Editar">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-md text-outline hover:bg-error-container hover:text-error transition-colors" title="Eliminar">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="table-row-hover transition-colors group">
+<td class="py-3 px-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-variant flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">person</span>
+</div>
+<span class="font-body-md text-body-md font-medium text-on-surface">Viewer</span>
+</div>
+</td>
+<td class="py-3 px-5 font-body-sm text-body-sm text-on-surface-variant max-w-xs truncate">Acceso básico de visualización a dashboards públicos y documentación general.</td>
+<td class="py-3 px-5 font-code-data text-code-data text-right">156</td>
+<td class="py-3 px-5 font-body-sm text-body-sm text-on-surface-variant">22 Ago 2023</td>
+<td class="py-3 px-5 text-center">
+<div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 rounded-md text-secondary hover:bg-secondary-container hover:text-on-secondary-container transition-colors" title="Editar">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-md text-outline hover:bg-error-container hover:text-error transition-colors" title="Eliminar">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Footer -->
+<div class="border-t border-surface-variant px-5 py-3 flex items-center justify-between bg-surface-bright">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Mostrando 4 de 12 roles</span>
+<div class="flex items-center gap-2">
+<button class="p-1.5 rounded-md text-outline hover:bg-surface-variant transition-colors disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="p-1.5 rounded-md text-on-surface hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

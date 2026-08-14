@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DevTrace - Log Incident</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Geist:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-tint": "#1b6489",
+                        "error-container": "#ffdad6",
+                        "surface-variant": "#e0e3e5",
+                        "secondary": "#45636d",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed-variant": "#2d4b55",
+                        "tertiary-container": "#a9000f",
+                        "tertiary": "#7d0008",
+                        "on-surface": "#191c1e",
+                        "inverse-surface": "#2d3133",
+                        "tertiary-fixed": "#ffdad6",
+                        "on-surface-variant": "#40484e",
+                        "on-secondary-fixed": "#001f28",
+                        "tertiary-fixed-dim": "#ffb4ab",
+                        "on-tertiary-container": "#ffb3aa",
+                        "surface-container-low": "#f2f4f6",
+                        "error": "#ba1a1a",
+                        "on-primary": "#ffffff",
+                        "surface-container-highest": "#e0e3e5",
+                        "primary": "#00405b",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#8fcef7",
+                        "outline": "#70787e",
+                        "on-secondary-container": "#4b6973",
+                        "surface-bright": "#f7f9fb",
+                        "on-tertiary-fixed-variant": "#93000b",
+                        "on-primary-fixed-variant": "#004c6c",
+                        "on-primary-container": "#8fcdf6",
+                        "primary-container": "#00587c",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed": "#410002",
+                        "primary-fixed-dim": "#8fcef7",
+                        "primary-fixed": "#c7e7ff",
+                        "surface-container-lowest": "#ffffff",
+                        "background": "#f7f9fb",
+                        "surface-container": "#eceef0",
+                        "secondary-fixed-dim": "#accbd8",
+                        "on-background": "#191c1e",
+                        "secondary-fixed": "#c8e8f4",
+                        "on-error": "#ffffff",
+                        "surface": "#f7f9fb",
+                        "outline-variant": "#c0c7cf",
+                        "on-primary-fixed": "#001e2e",
+                        "secondary-container": "#c8e8f4",
+                        "inverse-on-surface": "#eff1f3",
+                        "surface-dim": "#d8dadc",
+                        "surface-container-high": "#e6e8ea"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "xs": "4px",
+                        "xl": "40px",
+                        "sm": "8px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "32px",
+                        "base": "4px",
+                        "md": "16px",
+                        "lg": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "code-data": ["Geist"],
+                        "body-lg": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "code-data": ["13px", { "lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "letterSpacing": "0em", "fontWeight": "400" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .custom-shadow { box-shadow: 0 4px 20px -2px rgba(0, 88, 124, 0.08); }
+        .glass-overlay { backdrop-filter: blur(12px); background-color: rgba(255, 255, 255, 0.95); }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-full w-[280px] z-50 bg-surface border-r border-outline-variant/30 shadow-sm flex flex-col gap-2 p-md hidden md:flex">
+<div class="px-4 py-6 mb-4 border-b border-outline-variant/30">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Admin Console</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">DevTrace Enterprise</p>
+</div>
+<div class="flex-1 overflow-y-auto space-y-1">
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-all duration-200 cursor-pointer active:scale-[0.98] rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-all duration-200 cursor-pointer active:scale-[0.98] rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-body-md text-body-md">Users</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-all duration-200 cursor-pointer active:scale-[0.98] rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="security">security</span>
+<span class="font-body-md text-body-md">Roles</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-all duration-200 cursor-pointer active:scale-[0.98] rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="menu_open">menu_open</span>
+<span class="font-body-md text-body-md">Menu Options</span>
+</a>
+<a class="flex items-center gap-3 bg-secondary-container/20 text-primary font-semibold rounded-lg px-4 py-3 relative before:absolute before:left-0 before:w-1 before:h-2/3 before:bg-primary before:rounded-full cursor-pointer active:scale-[0.98] transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="error" style="font-variation-settings: 'FILL' 1;">error</span>
+<span class="font-body-md text-body-md">Incidents</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-all duration-200 cursor-pointer active:scale-[0.98] rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-body-md text-body-md">Logs</span>
+</a>
+</div>
+<div class="mt-auto pt-4 border-t border-outline-variant/30 space-y-1">
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-all duration-200 cursor-pointer active:scale-[0.98] rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-body-md text-body-md">Support</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-low transition-all duration-200 cursor-pointer active:scale-[0.98] rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="font-body-md text-body-md">Documentation</span>
+</a>
+<div class="mt-4 px-4 py-3 bg-surface-container-low rounded-lg">
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase">System Status: Healthy</p>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-1 md:ml-[280px] w-full min-h-screen">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-40 bg-surface/95 backdrop-blur-md border-b border-outline-variant/30 shadow-sm flex items-center justify-between px-margin-desktop h-16 md:w-[calc(100%-280px)]">
+<div class="flex items-center gap-4">
+<button class="md:hidden text-on-surface-variant hover:bg-secondary-container/20 p-2 rounded-full transition-colors cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<div class="font-headline-lg text-headline-lg font-bold text-primary tracking-tight">DevTrace</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="text-on-surface-variant hover:bg-secondary-container/20 p-2 rounded-full transition-colors cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:bg-secondary-container/20 p-2 rounded-full transition-colors cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="ml-4 w-8 h-8 rounded-full overflow-hidden bg-surface-container-highest cursor-pointer">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="A clean, modern user avatar portrait of a technical professional, neutral lighting, corporate environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQ9I_YtF41F0IYyU2W17ypsSUYISroihZhaRGkv7SGlIK24lBlxFZP1phZTwgeo7Yg7TgQbiRvdV5XrPRb8-6JeHFiIAcHu_Bdx-q2AXDQzhMxVgFDnY8PlZbuOTHdAJdY9zXGJuuiuXFD7xMMSpd48zdMZRpsJXoQg0cK0DOPDRwXsSBkfTF_lXTz4wzwadHNfKdfJh29rYTXn_fTB1fhANrQNUte9TN6NaXYiQCY9U81IQ5pmbGSVg"/>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="pt-24 pb-20 px-margin-mobile md:px-margin-desktop max-w-[1400px] mx-auto">
+<div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<h2 class="font-display-lg text-display-lg text-primary">Log New Incident</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-2">Document and track system anomalies with resolution workflows.</p>
+</div>
+<div class="flex gap-3">
+<button class="px-6 py-2 rounded-xl bg-transparent text-primary-container border border-primary-container hover:bg-primary-container/10 transition-colors font-body-md text-body-md font-medium">Save Draft</button>
+<button class="px-6 py-2 rounded-full bg-primary-container text-on-primary hover:bg-primary transition-colors font-body-md text-body-md font-medium custom-shadow">Submit Incident</button>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-gutter">
+<!-- Left Column: Core Data & Workflow (Spans 8 cols on large screens) -->
+<div class="xl:col-span-8 space-y-gutter">
+<!-- Section 1: Basic Details -->
+<section class="bg-surface rounded-xl border border-outline-variant/30 custom-shadow p-lg">
+<div class="mb-6 border-b border-outline-variant/30 pb-4">
+<h3 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container" data-icon="info">info</span>
+                                Incident Details
+                            </h3>
+</div>
+<div class="space-y-6">
+<div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-2">Incident Title</label>
+<input class="w-full bg-surface-bright border border-outline-variant rounded-xl px-4 py-3 font-body-md text-body-md focus:outline-none focus:border-primary-container focus:ring-3 focus:ring-secondary-container/30 transition-all" placeholder="e.g., Database Connection Timeout in Production" type="text"/>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-2">Severity Level</label>
+<select class="w-full bg-surface-bright border border-outline-variant rounded-xl px-4 py-3 font-body-md text-body-md focus:outline-none focus:border-primary-container focus:ring-3 focus:ring-secondary-container/30 transition-all appearance-none">
+<option>Critical (P1)</option>
+<option>High (P2)</option>
+<option>Medium (P3)</option>
+<option>Low (P4)</option>
+</select>
+</div>
+<div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-2">Affected System</label>
+<select class="w-full bg-surface-bright border border-outline-variant rounded-xl px-4 py-3 font-body-md text-body-md focus:outline-none focus:border-primary-container focus:ring-3 focus:ring-secondary-container/30 transition-all appearance-none">
+<option>Core API</option>
+<option>Auth Service</option>
+<option>Billing Gateway</option>
+<option>Frontend Dashboard</option>
+</select>
+</div>
+</div>
+<div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-2">Detailed Description</label>
+<textarea class="w-full bg-surface-bright border border-outline-variant rounded-xl px-4 py-3 font-body-md text-body-md focus:outline-none focus:border-primary-container focus:ring-3 focus:ring-secondary-container/30 transition-all resize-none" placeholder="Describe the behavior, expected outcome, and steps to reproduce..." rows="4"></textarea>
+</div>
+</div>
+</section>
+<!-- Section 2: Resolution Workflow -->
+<section class="bg-surface rounded-xl border border-outline-variant/30 custom-shadow p-lg">
+<div class="mb-6 border-b border-outline-variant/30 pb-4 flex justify-between items-center">
+<h3 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container" data-icon="account_tree">account_tree</span>
+                                Resolution Workflow
+                            </h3>
+<button class="text-primary-container hover:bg-secondary-container/20 p-2 rounded-full transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+<span class="font-body-sm text-body-sm font-medium">Add Step</span>
+</button>
+</div>
+<div class="space-y-6 relative before:absolute before:inset-y-0 before:left-4 before:w-0.5 before:bg-outline-variant/30">
+<!-- Step 1 -->
+<div class="relative pl-12">
+<div class="absolute left-0 top-1 w-8 h-8 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-label-caps text-label-caps shadow-sm">1</div>
+<div class="bg-surface-bright border border-outline-variant/50 rounded-xl p-4 hover:border-primary-container/50 transition-colors">
+<input class="w-full bg-transparent border-none p-0 font-body-md text-body-md font-medium focus:ring-0 mb-2" placeholder="Step Title (e.g., Isolate Database Node)" type="text"/>
+<textarea class="w-full bg-transparent border-none p-0 font-body-sm text-body-sm text-on-surface-variant focus:ring-0 resize-none" placeholder="Describe the action taken..." rows="2"></textarea>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="relative pl-12">
+<div class="absolute left-0 top-1 w-8 h-8 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center font-label-caps text-label-caps border border-outline-variant/50">2</div>
+<div class="bg-surface-bright border border-outline-variant/50 rounded-xl p-4 border-dashed opacity-70 hover:opacity-100 transition-opacity">
+<input class="w-full bg-transparent border-none p-0 font-body-md text-body-md font-medium focus:ring-0 mb-2" placeholder="Add next step title..." type="text"/>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Technical Details (Spans 4 cols on large screens) -->
+<div class="xl:col-span-4 space-y-gutter">
+<!-- Code Patch Editor -->
+<section class="bg-inverse-surface rounded-xl border border-outline-variant/30 shadow-lg p-md flex flex-col h-[320px]">
+<div class="mb-4 pb-2 border-b border-outline-variant/20 flex justify-between items-center">
+<h3 class="font-headline-md text-headline-md text-on-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-inverse-primary" data-icon="terminal">terminal</span>
+                                SQL Patch
+                            </h3>
+<span class="font-label-caps text-label-caps text-outline bg-surface-container/10 px-2 py-1 rounded">.sql</span>
+</div>
+<div class="flex-1 bg-[#1e1e1e] rounded-lg p-4 font-code-data text-code-data text-on-primary overflow-auto">
+<pre><code><span class="text-pink-400">BEGIN</span> <span class="text-blue-400">TRANSACTION</span>;
+
+<span class="text-pink-400">UPDATE</span> system_config
+<span class="text-pink-400">SET</span> timeout_ms = <span class="text-orange-400">5000</span>
+<span class="text-pink-400">WHERE</span> service_name = <span class="text-green-400">'db_main'</span>;
+
+<span class="text-outline">-- Awaiting peer review before commit</span>
+<span class="text-outline">-- COMMIT;</span></code></pre>
+</div>
+</section>
+<!-- Evidence Upload -->
+<section class="bg-surface rounded-xl border border-outline-variant/30 custom-shadow p-lg">
+<div class="mb-4 border-b border-outline-variant/30 pb-4">
+<h3 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container" data-icon="attachment">attachment</span>
+                                Evidence &amp; Logs
+                            </h3>
+</div>
+<div class="border-2 border-dashed border-outline-variant/50 rounded-xl p-8 flex flex-col items-center justify-center text-center hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="w-12 h-12 rounded-full bg-secondary-container/30 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary-container" data-icon="upload_file">upload_file</span>
+</div>
+<p class="font-body-md text-body-md font-medium text-on-surface">Drag &amp; drop files here</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">or click to browse (Max 50MB)</p>
+</div>
+<div class="mt-4 space-y-2">
+<!-- File Item -->
+<div class="flex items-center justify-between p-3 bg-surface-bright border border-outline-variant/30 rounded-lg">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-error" data-icon="picture_as_pdf">picture_as_pdf</span>
+<div>
+<p class="font-body-sm text-body-sm font-medium">error_trace_prod.pdf</p>
+<p class="font-label-caps text-label-caps text-on-surface-variant">2.4 MB</p>
+</div>
+</div>
+<button class="text-outline hover:text-error transition-colors">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Technical Notes -->
+<section class="bg-surface rounded-xl border border-outline-variant/30 custom-shadow p-lg">
+<div class="mb-4 border-b border-outline-variant/30 pb-4">
+<h3 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container" data-icon="notes">notes</span>
+                                Tech Notes
+                            </h3>
+</div>
+<textarea class="w-full bg-surface-bright border border-outline-variant rounded-xl px-4 py-3 font-body-sm text-body-sm focus:outline-none focus:border-primary-container focus:ring-3 focus:ring-secondary-container/30 transition-all resize-none" placeholder="Add any supplementary technical context or links to external dashboards..." rows="3"></textarea>
+</section>
+</div>
+</div>
+</div>
+</main>
+</body></html>

@@ -1,0 +1,12 @@
+# Variables de entorno — NUNCA subir al repositorio
+.env
+.env.local
+.env.*.local
+
+# Volúmenes de Docker
+postgres_data/
+
+# Node
+node_modules/
+dist/
+build/

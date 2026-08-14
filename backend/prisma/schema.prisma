@@ -1,0 +1,345 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["trazabilidad", "public"]
+}
+
+// ============================================================
+// ENUMS
+// ============================================================
+
+enum EstadoUsuario {
+  activo
+  inactivo
+  bloqueado
+  pendiente
+
+  @@schema("trazabilidad")
+  @@map("estado_usuario")
+}
+
+enum TipoAcceso {
+  ver
+  crear
+  editar
+  eliminar
+  exportar
+  aprobar
+
+  @@schema("trazabilidad")
+  @@map("tipo_acceso")
+}
+
+enum NivelLog {
+  info
+  warning
+  error
+  critico
+  debug
+
+  @@schema("trazabilidad")
+  @@map("nivel_log")
+}
+
+enum EstadoIncidencia {
+  abierta
+  en_proceso
+  resuelta
+  cerrada
+  cancelada
+  reabierta
+
+  @@schema("trazabilidad")
+  @@map("estado_incidencia")
+}
+
+enum Prioridad {
+  baja
+  media
+  alta
+  critica
+
+  @@schema("trazabilidad")
+  @@map("prioridad")
+}
+
+enum TipoPaso {
+  consulta_sql
+  comando
+  nota
+  archivo
+  configuracion
+  diagnostico
+  rollback
+  otro
+
+  @@schema("trazabilidad")
+  @@map("tipo_paso")
+}
+
+enum TipoAdjunto {
+  imagen
+  documento
+  script
+  log
+  comprimido
+  otro
+
+  @@schema("trazabilidad")
+  @@map("tipo_adjunto")
+}
+
+// ============================================================
+// MODELS
+// ============================================================
+
+model User {
+  id            String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username      String        @unique @db.VarChar(80)
+  email         String        @unique @db.VarChar(255)
+  passwordHash  String        @map("password_hash")
+  nombres       String        @db.VarChar(150)
+  apellidos     String        @db.VarChar(150)
+  telefono      String?       @db.VarChar(25)
+  avatarUrl     String?       @map("avatar_url")
+  estado        EstadoUsuario @default(pendiente)
+  intentosLogin Int           @default(0) @map("intentos_login") @db.SmallInt
+  ultimoLogin   DateTime?     @map("ultimo_login") @db.Timestamptz
+  mustChangePwd Boolean       @default(true) @map("must_change_pwd")
+  createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime      @default(now()) @map("updated_at") @db.Timestamptz
+  deletedAt     DateTime?     @map("deleted_at") @db.Timestamptz
+
+  userRoles           UserRole[]     @relation("UserToRoles")
+  assignedRoles       UserRole[]     @relation("AssignedByUser")
+  reportedIncidents   Incident[]     @relation("ReportedBy")
+  assignedIncidents   Incident[]     @relation("AssignedTo")
+  executedSteps       SolutionStep[] @relation("ExecutedBy")
+  reviewedSteps       SolutionStep[] @relation("ReviewedBy")
+  uploadedAttachments StepAttachment[] @relation("UploadedBy")
+  auditLogs           AuditLog[]
+
+  @@map("users")
+  @@schema("trazabilidad")
+}
+
+model Menu {
+  id          Int          @id @default(autoincrement())
+  codigo      String       @unique @db.VarChar(50)
+  nombre      String       @db.VarChar(150)
+  descripcion String?
+  icono       String?      @db.VarChar(100)
+  orden       Int          @default(0) @db.SmallInt
+  activo      Boolean      @default(true)
+  parentId    Int?         @map("parent_id")
+  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime     @default(now()) @map("updated_at") @db.Timestamptz
+
+  parent   Menu?        @relation("MenuParent", fields: [parentId], references: [id])
+  children Menu[]       @relation("MenuParent")
+  options  MenuOption[]
+
+  @@map("menus")
+  @@schema("trazabilidad")
+}
+
+model MenuOption {
+  id          Int      @id @default(autoincrement())
+  menuId      Int      @map("menu_id")
+  codigo      String   @unique @db.VarChar(100)
+  nombre      String   @db.VarChar(200)
+  descripcion String?
+  ruta        String?  @db.VarChar(500)
+  icono       String?  @db.VarChar(100)
+  orden       Int      @default(0) @db.SmallInt
+  activo      Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @default(now()) @map("updated_at") @db.Timestamptz
+
+  menu       Menu               @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  roleAccess RoleOptionAccess[]
+
+  @@map("menu_options")
+  @@schema("trazabilidad")
+}
+
+model Role {
+  id          Int      @id @default(autoincrement())
+  codigo      String   @unique @db.VarChar(80)
+  nombre      String   @db.VarChar(150)
+  descripcion String?
+  esAdmin     Boolean  @default(false) @map("es_admin")
+  activo      Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @default(now()) @map("updated_at") @db.Timestamptz
+
+  userRoles UserRole[]
+  access    RoleOptionAccess[]
+
+  @@map("roles")
+  @@schema("trazabilidad")
+}
+
+model UserRole {
+  id            BigInt    @id @default(autoincrement())
+  userId        String    @map("user_id") @db.Uuid
+  roleId        Int       @map("role_id")
+  asignadoPor   String?   @map("asignado_por") @db.Uuid
+  vigenciaDesde DateTime  @default(dbgenerated("CURRENT_DATE")) @map("vigencia_desde") @db.Date
+  vigenciaHasta DateTime? @map("vigencia_hasta") @db.Date
+  activo        Boolean   @default(true)
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  user       User  @relation("UserToRoles", fields: [userId], references: [id], onDelete: Cascade)
+  role       Role  @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  assignedBy User? @relation("AssignedByUser", fields: [asignadoPor], references: [id], onDelete: SetNull)
+
+  @@unique([userId, roleId])
+  @@map("user_roles")
+  @@schema("trazabilidad")
+}
+
+model RoleOptionAccess {
+  id           BigInt     @id @default(autoincrement())
+  roleId       Int        @map("role_id")
+  menuOptionId Int        @map("menu_option_id")
+  acceso       TipoAcceso
+  permitido    Boolean    @default(true)
+  createdAt    DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime   @default(now()) @map("updated_at") @db.Timestamptz
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  menuOption MenuOption @relation(fields: [menuOptionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, menuOptionId, acceso])
+  @@map("role_option_access")
+  @@schema("trazabilidad")
+}
+
+model AuditLog {
+  id            BigInt   @id @default(autoincrement())
+  userId        String?  @map("user_id") @db.Uuid
+  sessionId     String?  @map("session_id") @db.VarChar(128)
+  nivel         NivelLog @default(info)
+  modulo        String?  @db.VarChar(100)
+  accion        String   @db.VarChar(200)
+  descripcion   String?
+  valorAnterior Json?    @map("valor_anterior")
+  valorNuevo    Json?    @map("valor_nuevo")
+  entidad       String?  @db.VarChar(100)
+  entidadId     String?  @map("entidad_id") @db.VarChar(100)
+  ipAddress     String?  @map("ip_address")
+  userAgent     String?  @map("user_agent")
+  exitoso       Boolean  @default(true)
+  detalleError  String?  @map("detalle_error")
+  duracionMs    Int?     @map("duracion_ms")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("audit_logs")
+  @@schema("trazabilidad")
+}
+
+model Incident {
+  id                  String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  numero              String           @unique @db.VarChar(30)
+  titulo              String           @db.VarChar(500)
+  descripcion         String
+  estado              EstadoIncidencia @default(abierta)
+  prioridad           Prioridad        @default(media)
+  categoria           String?          @db.VarChar(150)
+  subcategoria        String?          @db.VarChar(150)
+  ambiente            String?          @db.VarChar(100)
+  servidor            String?          @db.VarChar(200)
+  baseDatos           String?          @map("base_datos") @db.VarChar(200)
+  reportadoPor        String           @map("reportado_por") @db.Uuid
+  asignadoA           String?          @map("asignado_a") @db.Uuid
+  fechaReporte        DateTime         @default(now()) @map("fecha_reporte") @db.Timestamptz
+  fechaInicio         DateTime?        @map("fecha_inicio") @db.Timestamptz
+  fechaResolucion     DateTime?        @map("fecha_resolucion") @db.Timestamptz
+  fechaCierre         DateTime?        @map("fecha_cierre") @db.Timestamptz
+  tiempoResolucionMin Int?             @map("tiempo_resolucion_min")
+  impacto             String?
+  causaRaiz           String?          @map("causa_raiz")
+  solucionResumida    String?          @map("solucion_resumida")
+  ticketProactivanet  String?          @map("ticket_proactivanet") @db.VarChar(100)
+  esRecurrente        Boolean          @default(false) @map("es_recurrente")
+  incidentPadre       String?          @map("incident_padre") @db.Uuid
+  etiquetas           String[]
+  metadata            Json?
+  createdAt           DateTime         @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt           DateTime         @default(now()) @map("updated_at") @db.Timestamptz
+  deletedAt           DateTime?        @map("deleted_at") @db.Timestamptz
+
+  reportedBy     User           @relation("ReportedBy", fields: [reportadoPor], references: [id])
+  assignedTo     User?          @relation("AssignedTo", fields: [asignadoA], references: [id])
+  parentIncident Incident?      @relation("IncidentParent", fields: [incidentPadre], references: [id])
+  childIncidents Incident[]     @relation("IncidentParent")
+  steps          SolutionStep[]
+
+  @@map("incidents")
+  @@schema("trazabilidad")
+}
+
+model SolutionStep {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  incidentId        String    @map("incident_id") @db.Uuid
+  numeroPaso        Int       @map("numero_paso") @db.SmallInt
+  tipo              TipoPaso  @default(nota)
+  titulo            String    @db.VarChar(300)
+  descripcion       String?
+  contenido         String?
+  ambiente          String?   @db.VarChar(100)
+  servidor          String?   @db.VarChar(200)
+  baseDatos         String?   @map("base_datos") @db.VarChar(200)
+  usuarioDb         String?   @map("usuario_db") @db.VarChar(100)
+  resultado         String?
+  exitoso           Boolean?
+  tiempoEjecucionMs Int?      @map("tiempo_ejecucion_ms")
+  version           Int       @default(1) @db.SmallInt
+  esRollback        Boolean   @default(false) @map("es_rollback")
+  ejecutadoPor      String?   @map("ejecutado_por") @db.Uuid
+  revisadoPor       String?   @map("revisado_por") @db.Uuid
+  fechaEjecucion    DateTime? @map("fecha_ejecucion") @db.Timestamptz
+  fechaRevision     DateTime? @map("fecha_revision") @db.Timestamptz
+  notasInternas     String?   @map("notas_internas")
+  metadata          Json?
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime  @default(now()) @map("updated_at") @db.Timestamptz
+
+  incident    Incident         @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  executedBy  User?            @relation("ExecutedBy", fields: [ejecutadoPor], references: [id])
+  reviewedBy  User?            @relation("ReviewedBy", fields: [revisadoPor], references: [id])
+  attachments StepAttachment[]
+
+  @@unique([incidentId, numeroPaso])
+  @@map("solution_steps")
+  @@schema("trazabilidad")
+}
+
+model StepAttachment {
+  id             String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  stepId         String      @map("step_id") @db.Uuid
+  tipo           TipoAdjunto @default(documento)
+  nombreOriginal String      @map("nombre_original") @db.VarChar(500)
+  nombreStorage  String      @unique @map("nombre_storage") @db.VarChar(500)
+  rutaStorage    String      @map("ruta_storage")
+  mimeType       String?     @map("mime_type") @db.VarChar(255)
+  tamanoBytes    BigInt?     @map("tamano_bytes")
+  checksumSha256 String?     @map("checksum_sha256") @db.Char(64)
+  descripcion    String?
+  subidoPor      String?     @map("subido_por") @db.Uuid
+  createdAt      DateTime    @default(now()) @map("created_at") @db.Timestamptz
+
+  step       SolutionStep @relation(fields: [stepId], references: [id], onDelete: Cascade)
+  uploadedBy User?        @relation("UploadedBy", fields: [subidoPor], references: [id])
+
+  @@map("step_attachments")
+  @@schema("trazabilidad")
+}
