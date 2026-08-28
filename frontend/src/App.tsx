@@ -9,6 +9,7 @@ import { IncidentDetailPage } from "./pages/IncidentDetailPage";
 import { UsersPage } from "./pages/UsersPage";
 import { RolesPage } from "./pages/RolesPage";
 import { MenusPage } from "./pages/MenusPage";
+import { SystemsPage } from "./pages/SystemsPage";
 import { AuditLogsPage } from "./pages/AuditLogsPage";
 import { TipoAcceso } from "./types";
 
@@ -93,6 +94,14 @@ export const AppContent: React.FC = () => {
         element={
           <ProtectedRoute requiredOption="CONF_MENUS" requiredAccess="ver">
             <MenusPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/sistemas"
+        element={
+          <ProtectedRoute requiredOption="CONF_SISTEMAS" requiredAccess="ver">
+            <SystemsPage />
           </ProtectedRoute>
         }
       />

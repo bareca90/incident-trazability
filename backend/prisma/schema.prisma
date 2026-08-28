@@ -246,6 +246,21 @@ model AuditLog {
   @@schema("trazabilidad")
 }
 
+model System {
+  id          Int        @id @default(autoincrement())
+  codigo      String     @unique @db.VarChar(80)
+  nombre      String     @db.VarChar(200)
+  descripcion String?
+  activo      Boolean    @default(true)
+  createdAt   DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime   @default(now()) @map("updated_at") @db.Timestamptz
+
+  incidents   Incident[]
+
+  @@map("systems")
+  @@schema("trazabilidad")
+}
+
 model Incident {
   id                  String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   numero              String           @unique @db.VarChar(30)
@@ -258,6 +273,8 @@ model Incident {
   ambiente            String?          @db.VarChar(100)
   servidor            String?          @db.VarChar(200)
   baseDatos           String?          @map("base_datos") @db.VarChar(200)
+  sistemaId           Int?             @map("sistema_id")
+  departamentoSolicitante String?      @map("departamento_solicitante") @db.VarChar(200)
   reportadoPor        String           @map("reportado_por") @db.Uuid
   asignadoA           String?          @map("asignado_a") @db.Uuid
   fechaReporte        DateTime         @default(now()) @map("fecha_reporte") @db.Timestamptz
@@ -277,6 +294,7 @@ model Incident {
   updatedAt           DateTime         @default(now()) @map("updated_at") @db.Timestamptz
   deletedAt           DateTime?        @map("deleted_at") @db.Timestamptz
 
+  sistema        System?        @relation(fields: [sistemaId], references: [id], onDelete: SetNull)
   reportedBy     User           @relation("ReportedBy", fields: [reportadoPor], references: [id])
   assignedTo     User?          @relation("AssignedTo", fields: [asignadoA], references: [id])
   parentIncident Incident?      @relation("IncidentParent", fields: [incidentPadre], references: [id])

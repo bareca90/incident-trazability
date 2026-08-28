@@ -37,6 +37,12 @@ export const Sidebar: React.FC = () => {
       visible: hasPermission("CONF_MENUS", "ver"),
     },
     {
+      name: "Sistemas Afectados",
+      href: "/sistemas",
+      icon: "dns",
+      visible: hasPermission("CONF_SISTEMAS", "ver"),
+    },
+    {
       name: "Logs de Auditoría",
       href: "/audit-logs",
       icon: "receipt_long",

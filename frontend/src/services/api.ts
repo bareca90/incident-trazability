@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ApiResponse, LoginResponse, User, Incident, SolutionStep, StepAttachment, Role, Menu, MenuOption, AuditLog } from "../types";
+import { ApiResponse, LoginResponse, User, Incident, SolutionStep, StepAttachment, Role, Menu, MenuOption, AuditLog, System } from "../types";
 
 const API_BASE_URL = "/api";
 
@@ -247,7 +247,31 @@ export const menuService = {
   },
 };
 
-// Endpoints de AuditorÃ­a
+// Endpoints de Sistemas Afectados
+export const systemService = {
+  getAll: async () => {
+    const res = await api.get<ApiResponse<System[]>>("/sistemas");
+    return res.data;
+  },
+  getById: async (id: number) => {
+    const res = await api.get<ApiResponse<System>>(`/sistemas/${id}`);
+    return res.data;
+  },
+  create: async (data: Partial<System>) => {
+    const res = await api.post<ApiResponse<System>>("/sistemas", data);
+    return res.data;
+  },
+  update: async (id: number, data: Partial<System>) => {
+    const res = await api.put<ApiResponse<System>>(`/sistemas/${id}`, data);
+    return res.data;
+  },
+  delete: async (id: number) => {
+    const res = await api.delete(`/sistemas/${id}`);
+    return res.data;
+  },
+};
+
+// Endpoints de Auditoría
 export const auditLogService = {
   getAll: async (params?: Record<string, unknown>) => {
     const res = await api.get<ApiResponse<AuditLog[]>>("/audit-logs", { params });

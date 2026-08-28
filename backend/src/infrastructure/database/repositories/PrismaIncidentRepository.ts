@@ -50,8 +50,11 @@ export class PrismaIncidentRepository implements IIncidentRepository {
       prisma.incident.findMany({
         where, skip: (page - 1) * limit, take: limit,
         orderBy: { fechaReporte: "desc" },
-        include: { reportedBy: { select: { id: true, username: true, nombres: true, apellidos: true } },
-                   assignedTo:  { select: { id: true, username: true, nombres: true, apellidos: true } } },
+        include: {
+          reportedBy: { select: { id: true, username: true, nombres: true, apellidos: true } },
+          assignedTo:  { select: { id: true, username: true, nombres: true, apellidos: true } },
+          sistema:     { select: { id: true, codigo: true, nombre: true } },
+        },
       }),
       prisma.incident.count({ where }),
     ]);
@@ -64,6 +67,7 @@ export class PrismaIncidentRepository implements IIncidentRepository {
       include: {
         reportedBy: { select: { id: true, username: true, nombres: true, apellidos: true } },
         assignedTo:  { select: { id: true, username: true, nombres: true, apellidos: true } },
+        sistema:     { select: { id: true, codigo: true, nombre: true } },
         steps: includeSteps
           ? { orderBy: { numeroPaso: "asc" }, include: { attachments: true, executedBy: { select: { id: true, username: true } } } }
           : false,
@@ -73,7 +77,14 @@ export class PrismaIncidentRepository implements IIncidentRepository {
   }
 
   async findByNumero(numero: string): Promise<IncidentEntity | null> {
-    const i = await prisma.incident.findFirst({ where: { numero, deletedAt: null } });
+    const i = await prisma.incident.findFirst({
+      where: { numero, deletedAt: null },
+      include: {
+        reportedBy: { select: { id: true, username: true, nombres: true, apellidos: true } },
+        assignedTo:  { select: { id: true, username: true, nombres: true, apellidos: true } },
+        sistema:     { select: { id: true, codigo: true, nombre: true } },
+      },
+    });
     return i ? this.toEntity(i) : null;
   }
 
@@ -81,25 +92,27 @@ export class PrismaIncidentRepository implements IIncidentRepository {
     const generatedNumero = await this.generateNumero();
     const i = await prisma.incident.create({
       data: {
-        numero:             data.numero || generatedNumero,
-        titulo:             data.titulo,
-        descripcion:        data.descripcion,
-        estado:             (data.estado as any) ?? "abierta",
-        prioridad:          (data.prioridad as any) ?? "media",
-        categoria:          data.categoria,
-        subcategoria:       data.subcategoria,
-        ambiente:           data.ambiente,
-        servidor:           data.servidor,
-        baseDatos:          data.baseDatos,
-        reportadoPor:       data.reportadoPor,
-        asignadoA:          data.asignadoA,
-        impacto:            data.impacto,
-        causaRaiz:          data.causaRaiz,
-        solucionResumida:   data.solucionResumida,
-        ticketProactivanet: data.ticketProactivanet,
-        etiquetas:          data.etiquetas ?? [],
-        metadata:           data.metadata as any,
-        incidentPadre:      data.incidentPadre,
+        numero:                  data.numero || generatedNumero,
+        titulo:                  data.titulo,
+        descripcion:             data.descripcion,
+        estado:                  (data.estado as any) ?? "abierta",
+        prioridad:               (data.prioridad as any) ?? "media",
+        categoria:               data.categoria,
+        subcategoria:            data.subcategoria,
+        ambiente:                data.ambiente,
+        servidor:                data.servidor,
+        baseDatos:               data.baseDatos,
+        sistemaId:               data.sistemaId,
+        departamentoSolicitante: data.departamentoSolicitante,
+        reportadoPor:            data.reportadoPor,
+        asignadoA:               data.asignadoA,
+        impacto:                 data.impacto,
+        causaRaiz:               data.causaRaiz,
+        solucionResumida:        data.solucionResumida,
+        ticketProactivanet:      data.ticketProactivanet,
+        etiquetas:               data.etiquetas ?? [],
+        metadata:                data.metadata as any,
+        incidentPadre:           data.incidentPadre,
       },
     });
     return this.findById(i.id) as Promise<IncidentEntity>;

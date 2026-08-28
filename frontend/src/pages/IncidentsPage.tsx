@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { incidentService, userService } from "../services/api";
-import { Incident, User, EstadoIncidencia, Prioridad } from "../types";
+import { incidentService, userService, systemService } from "../services/api";
+import { Incident, User, System, EstadoIncidencia, Prioridad } from "../types";
 import { Badge } from "../components/common/Badge";
 import { Modal } from "../components/common/Modal";
 import { useAuth } from "../context/AuthContext";
@@ -10,10 +10,11 @@ export const IncidentsPage: React.FC = () => {
   const { hasPermission } = useAuth();
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [users, setUsers] = useState<User[]>([]);
+  const [systems, setSystems] = useState<System[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [estadoFilter, setEstadoFilter] = useState("");
-  const [prioridadFilter, setPrioridadFilter] = useState("");
+  const [sistemaFilter, setSistemaFilter] = useState("");
 
   // Modal Nueva Incidencia / Solución
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -22,10 +23,9 @@ export const IncidentsPage: React.FC = () => {
   const [newIncident, setNewIncident] = useState({
     titulo: "",
     descripcion: "",
-    prioridad: "media" as Prioridad,
     estado: "abierta" as EstadoIncidencia,
-    categoria: "Base de Datos",
-    ambiente: "Producción",
+    sistemaId: 0,
+    departamentoSolicitante: "",
     servidor: "",
     baseDatos: "",
     asignadoA: "",
@@ -44,10 +44,9 @@ export const IncidentsPage: React.FC = () => {
     numero: string;
     titulo: string;
     descripcion: string;
-    prioridad: Prioridad;
     estado: EstadoIncidencia;
-    categoria: string;
-    ambiente: string;
+    sistemaId: number;
+    departamentoSolicitante: string;
     servidor: string;
     baseDatos: string;
     asignadoA: string;
@@ -63,7 +62,6 @@ export const IncidentsPage: React.FC = () => {
       const res = await incidentService.getAll({
         search: search || undefined,
         estado: estadoFilter || undefined,
-        prioridad: prioridadFilter || undefined,
       });
       if (res.success) setIncidents(res.data);
     } catch (err) {
@@ -75,11 +73,14 @@ export const IncidentsPage: React.FC = () => {
 
   useEffect(() => {
     fetchIncidents();
-  }, [search, estadoFilter, prioridadFilter]);
+  }, [search, estadoFilter, sistemaFilter]);
 
   useEffect(() => {
     userService.getAll().then((res) => {
       if (res.success) setUsers(res.data);
+    });
+    systemService.getAll().then((res) => {
+      if (res.success) setSystems(res.data);
     });
   }, []);
 
@@ -91,10 +92,9 @@ export const IncidentsPage: React.FC = () => {
       const payload: Partial<Incident> = {
         titulo: newIncident.titulo,
         descripcion: newIncident.descripcion,
-        prioridad: newIncident.prioridad,
         estado: newIncident.estado,
-        categoria: newIncident.categoria || undefined,
-        ambiente: newIncident.ambiente || undefined,
+        sistemaId: newIncident.sistemaId ? Number(newIncident.sistemaId) : undefined,
+        departamentoSolicitante: newIncident.departamentoSolicitante || undefined,
         servidor: newIncident.servidor || undefined,
         baseDatos: newIncident.baseDatos || undefined,
         asignadoA: newIncident.asignadoA || undefined,
@@ -109,10 +109,9 @@ export const IncidentsPage: React.FC = () => {
         setNewIncident({
           titulo: "",
           descripcion: "",
-          prioridad: "media",
           estado: "abierta",
-          categoria: "Base de Datos",
-          ambiente: "Producción",
+          sistemaId: 0,
+          departamentoSolicitante: "",
           servidor: "",
           baseDatos: "",
           asignadoA: "",
@@ -139,10 +138,9 @@ export const IncidentsPage: React.FC = () => {
       numero: inc.numero,
       titulo: inc.titulo,
       descripcion: inc.descripcion,
-      prioridad: inc.prioridad,
       estado: inc.estado,
-      categoria: inc.categoria || "",
-      ambiente: inc.ambiente || "",
+      sistemaId: inc.sistemaId || 0,
+      departamentoSolicitante: inc.departamentoSolicitante || "",
       servidor: inc.servidor || "",
       baseDatos: inc.baseDatos || "",
       asignadoA: inc.asignadoA || "",
@@ -164,10 +162,9 @@ export const IncidentsPage: React.FC = () => {
       const payload: Partial<Incident> = {
         titulo: editingIncident.titulo,
         descripcion: editingIncident.descripcion,
-        prioridad: editingIncident.prioridad,
         estado: editingIncident.estado,
-        categoria: editingIncident.categoria || undefined,
-        ambiente: editingIncident.ambiente || undefined,
+        sistemaId: editingIncident.sistemaId ? Number(editingIncident.sistemaId) : undefined,
+        departamentoSolicitante: editingIncident.departamentoSolicitante || undefined,
         servidor: editingIncident.servidor || undefined,
         baseDatos: editingIncident.baseDatos || undefined,
         asignadoA: editingIncident.asignadoA || undefined,
@@ -282,15 +279,16 @@ export const IncidentsPage: React.FC = () => {
           </select>
 
           <select
-            value={prioridadFilter}
-            onChange={(e) => setPrioridadFilter(e.target.value)}
+            value={sistemaFilter}
+            onChange={(e) => setSistemaFilter(e.target.value)}
             className="px-3 py-2 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
           >
-            <option value="">Todas las Prioridades</option>
-            <option value="baja">Baja</option>
-            <option value="media">Media</option>
-            <option value="alta">Alta</option>
-            <option value="critica">Crítica</option>
+            <option value="">Todos los Sistemas</option>
+            {systems.map((s) => (
+              <option key={s.id} value={s.id.toString()}>
+                {s.nombre}
+              </option>
+            ))}
           </select>
         </div>
       </div>
@@ -314,16 +312,19 @@ export const IncidentsPage: React.FC = () => {
               <thead className="bg-surface-container-low text-on-surface-variant font-semibold uppercase border-b border-outline-variant/20">
                 <tr>
                   <th className="px-5 py-3.5">Ticket / Proactivanet</th>
-                  <th className="px-5 py-3.5">Título & Categoría</th>
-                  <th className="px-5 py-3.5">Ambiente / BD</th>
-                  <th className="px-5 py-3.5">Prioridad</th>
+                  <th className="px-5 py-3.5">Título / Caso</th>
+                  <th className="px-5 py-3.5">Sistema Afectado</th>
+                  <th className="px-5 py-3.5">Depto. Solicitante</th>
+                  <th className="px-5 py-3.5">Servidor / BD</th>
                   <th className="px-5 py-3.5">Estado</th>
                   <th className="px-5 py-3.5">Asignado a</th>
                   <th className="px-5 py-3.5 text-right">Acciones</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-outline-variant/20">
-                {incidents.map((inc) => (
+                {incidents
+                  .filter((inc) => !sistemaFilter || inc.sistemaId?.toString() === sistemaFilter)
+                  .map((inc) => (
                   <tr key={inc.id} className="hover:bg-surface-container-low/50 transition-colors">
                     <td className="px-5 py-4">
                       <div className="flex flex-col gap-1">
@@ -342,12 +343,31 @@ export const IncidentsPage: React.FC = () => {
                     </td>
                     <td className="px-5 py-4 max-w-xs">
                       <p className="font-semibold text-on-surface truncate">{inc.titulo}</p>
-                      <p className="text-[11px] text-on-surface-variant mt-0.5">{inc.categoria || "General"}</p>
+                      <p className="text-[11px] text-on-surface-variant mt-0.5 line-clamp-1 font-mono">{inc.descripcion}</p>
+                    </td>
+                    <td className="px-5 py-4">
+                      {inc.sistema ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-primary-container text-on-primary-container text-[11px] font-semibold">
+                          <span className="material-symbols-outlined text-[13px]">dns</span>
+                          <span>{inc.sistema.nombre}</span>
+                        </span>
+                      ) : (
+                        <span className="text-[11px] text-on-surface-variant/50 italic">No especificado</span>
+                      )}
+                    </td>
+                    <td className="px-5 py-4">
+                      {inc.departamentoSolicitante ? (
+                        <span className="font-mono text-xs font-semibold text-on-surface bg-surface-container-high px-2 py-0.5 rounded border border-outline-variant/30">
+                          {inc.departamentoSolicitante}
+                        </span>
+                      ) : (
+                        <span className="text-[11px] text-on-surface-variant/50 italic">—</span>
+                      )}
                     </td>
                     <td className="px-5 py-4">
                       <div className="flex flex-col gap-0.5">
                         <span className="font-mono text-[11px] font-semibold text-on-surface">
-                          {inc.ambiente || "N/A"}
+                          {inc.servidor || "—"}
                         </span>
                         {inc.baseDatos && (
                           <span className="text-[10px] text-on-surface-variant font-mono">
@@ -356,7 +376,6 @@ export const IncidentsPage: React.FC = () => {
                         )}
                       </div>
                     </td>
-                    <td className="px-5 py-4">{getPriorityBadge(inc.prioridad)}</td>
                     <td className="px-5 py-4">{getStatusBadge(inc.estado)}</td>
                     <td className="px-5 py-4">
                       {inc.assignedTo ? (
@@ -456,7 +475,7 @@ export const IncidentsPage: React.FC = () => {
               value={newIncident.descripcion}
               onChange={(e) => setNewIncident({ ...newIncident, descripcion: e.target.value })}
               placeholder="Detalla los síntomas, mensajes de error, tablas afectadas y contexto..."
-              className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs font-mono font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
 
@@ -478,49 +497,38 @@ export const IncidentsPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-on-surface-variant uppercase mb-1">
-                Prioridad
+              <label className="block text-xs font-semibold text-on-surface-variant uppercase mb-1 flex items-center gap-1">
+                <span className="material-symbols-outlined text-sm text-primary">dns</span>
+                <span>Sistema Afectado</span>
               </label>
               <select
-                value={newIncident.prioridad}
-                onChange={(e) => setNewIncident({ ...newIncident, prioridad: e.target.value as Prioridad })}
-                className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs text-on-surface"
+                value={newIncident.sistemaId}
+                onChange={(e) => setNewIncident({ ...newIncident, sistemaId: Number(e.target.value) })}
+                className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs text-on-surface font-semibold"
               >
-                <option value="baja">Baja</option>
-                <option value="media">Media</option>
-                <option value="alta">Alta</option>
-                <option value="critica">Crítica</option>
+                <option value={0}>-- Seleccionar sistema --</option>
+                {systems.map((s) => (
+                  <option key={s.id} value={s.id}>{s.nombre}</option>
+                ))}
               </select>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-on-surface-variant uppercase mb-1">
-                Categoría
+              <label className="block text-xs font-semibold text-on-surface-variant uppercase mb-1 flex items-center gap-1">
+                <span className="material-symbols-outlined text-sm text-primary">domain</span>
+                <span>Departamento Solicitante</span>
               </label>
               <input
                 type="text"
-                value={newIncident.categoria}
-                onChange={(e) => setNewIncident({ ...newIncident, categoria: e.target.value })}
-                placeholder="Ej: Base de Datos, Redes..."
-                className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs text-on-surface"
+                value={newIncident.departamentoSolicitante}
+                onChange={(e) => setNewIncident({ ...newIncident, departamentoSolicitante: e.target.value })}
+                placeholder="Ej: Finanzas, Operaciones..."
+                className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs font-mono font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-on-surface-variant uppercase mb-1">
-                Ambiente Afectado
-              </label>
-              <input
-                type="text"
-                value={newIncident.ambiente}
-                onChange={(e) => setNewIncident({ ...newIncident, ambiente: e.target.value })}
-                placeholder="Producción, Staging, QA..."
-                className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs text-on-surface"
-              />
-            </div>
-
             <div>
               <label className="block text-xs font-semibold text-on-surface-variant uppercase mb-1">
                 Servidor / Host
@@ -546,9 +554,7 @@ export const IncidentsPage: React.FC = () => {
                 className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs font-mono text-on-surface"
               />
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-on-surface-variant uppercase mb-1">
                 Asignar A
@@ -566,19 +572,19 @@ export const IncidentsPage: React.FC = () => {
                 ))}
               </select>
             </div>
+          </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-on-surface-variant uppercase mb-1">
-                Impacto Operativo
-              </label>
-              <input
-                type="text"
-                value={newIncident.impacto}
-                onChange={(e) => setNewIncident({ ...newIncident, impacto: e.target.value })}
-                placeholder="Ej: Afecta procesamiento de 120 órdenes"
-                className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs text-on-surface"
-              />
-            </div>
+          <div>
+            <label className="block text-xs font-semibold text-on-surface-variant uppercase mb-1">
+              Impacto Operativo
+            </label>
+            <input
+              type="text"
+              value={newIncident.impacto}
+              onChange={(e) => setNewIncident({ ...newIncident, impacto: e.target.value })}
+              placeholder="Ej: Afecta procesamiento de 120 órdenes"
+              className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs text-on-surface"
+            />
           </div>
 
           {/* Causa Raíz y Solución Inicial */}
@@ -595,7 +601,7 @@ export const IncidentsPage: React.FC = () => {
                   value={newIncident.causaRaiz}
                   onChange={(e) => setNewIncident({ ...newIncident, causaRaiz: e.target.value })}
                   placeholder="Motivo principal del fallo..."
-                  className="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-xs text-on-surface"
+                  className="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-xs font-mono font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
               <div>
@@ -605,7 +611,7 @@ export const IncidentsPage: React.FC = () => {
                   value={newIncident.solucionResumida}
                   onChange={(e) => setNewIncident({ ...newIncident, solucionResumida: e.target.value })}
                   placeholder="Resumen del procedimiento de solución..."
-                  className="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-xs text-on-surface"
+                  className="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-xs font-mono font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
             </div>
@@ -687,7 +693,7 @@ export const IncidentsPage: React.FC = () => {
                 rows={3}
                 value={editingIncident.descripcion}
                 onChange={(e) => setEditingIncident({ ...editingIncident, descripcion: e.target.value })}
-                className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs font-mono font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
 
@@ -711,47 +717,38 @@ export const IncidentsPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-on-surface-variant uppercase mb-1">
-                  Prioridad *
+                <label className="block text-xs font-semibold text-on-surface-variant uppercase mb-1 flex items-center gap-1">
+                  <span className="material-symbols-outlined text-sm text-primary">dns</span>
+                  <span>Sistema Afectado</span>
                 </label>
                 <select
-                  value={editingIncident.prioridad}
-                  onChange={(e) => setEditingIncident({ ...editingIncident, prioridad: e.target.value as Prioridad })}
-                  className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs text-on-surface"
+                  value={editingIncident.sistemaId}
+                  onChange={(e) => setEditingIncident({ ...editingIncident, sistemaId: Number(e.target.value) })}
+                  className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs text-on-surface font-semibold"
                 >
-                  <option value="baja">Baja</option>
-                  <option value="media">Media</option>
-                  <option value="alta">Alta</option>
-                  <option value="critica">Crítica</option>
+                  <option value={0}>-- Seleccionar sistema --</option>
+                  {systems.map((s) => (
+                    <option key={s.id} value={s.id}>{s.nombre}</option>
+                  ))}
                 </select>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-on-surface-variant uppercase mb-1">
-                  Categoría
+                <label className="block text-xs font-semibold text-on-surface-variant uppercase mb-1 flex items-center gap-1">
+                  <span className="material-symbols-outlined text-sm text-primary">domain</span>
+                  <span>Departamento Solicitante</span>
                 </label>
                 <input
                   type="text"
-                  value={editingIncident.categoria}
-                  onChange={(e) => setEditingIncident({ ...editingIncident, categoria: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs text-on-surface"
+                  value={editingIncident.departamentoSolicitante}
+                  onChange={(e) => setEditingIncident({ ...editingIncident, departamentoSolicitante: e.target.value })}
+                  placeholder="Ej: Finanzas, Operaciones..."
+                  className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs font-mono font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-on-surface-variant uppercase mb-1">
-                  Ambiente
-                </label>
-                <input
-                  type="text"
-                  value={editingIncident.ambiente}
-                  onChange={(e) => setEditingIncident({ ...editingIncident, ambiente: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs text-on-surface"
-                />
-              </div>
-
               <div>
                 <label className="block text-xs font-semibold text-on-surface-variant uppercase mb-1">
                   Servidor
@@ -775,9 +772,7 @@ export const IncidentsPage: React.FC = () => {
                   className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs font-mono text-on-surface"
                 />
               </div>
-            </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-on-surface-variant uppercase mb-1">
                   Asignado A
@@ -795,18 +790,18 @@ export const IncidentsPage: React.FC = () => {
                   ))}
                 </select>
               </div>
+            </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-on-surface-variant uppercase mb-1">
-                  Impacto
-                </label>
-                <input
-                  type="text"
-                  value={editingIncident.impacto}
-                  onChange={(e) => setEditingIncident({ ...editingIncident, impacto: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs text-on-surface"
-                />
-              </div>
+            <div>
+              <label className="block text-xs font-semibold text-on-surface-variant uppercase mb-1">
+                Impacto
+              </label>
+              <input
+                type="text"
+                value={editingIncident.impacto}
+                onChange={(e) => setEditingIncident({ ...editingIncident, impacto: e.target.value })}
+                className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs text-on-surface"
+              />
             </div>
 
             {/* Causa Raíz y Solución */}
@@ -822,7 +817,7 @@ export const IncidentsPage: React.FC = () => {
                   value={editingIncident.causaRaiz}
                   onChange={(e) => setEditingIncident({ ...editingIncident, causaRaiz: e.target.value })}
                   placeholder="Causa raíz identificada tras el análisis..."
-                  className="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-xs text-on-surface"
+                  className="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-xs font-mono font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
               <div>
@@ -832,7 +827,7 @@ export const IncidentsPage: React.FC = () => {
                   value={editingIncident.solucionResumida}
                   onChange={(e) => setEditingIncident({ ...editingIncident, solucionResumida: e.target.value })}
                   placeholder="Resumen de acciones que solucionaron la incidencia..."
-                  className="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-xs text-on-surface"
+                  className="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-xs font-mono font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
             </div>

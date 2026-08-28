@@ -124,17 +124,44 @@ async function seed() {
           activo: true,
         },
         {
+          codigo: 'CONF_SISTEMAS',
+          nombre: 'Sistemas Afectados',
+          descripcion: 'Catálogo y gestión de sistemas informáticos afectados por incidencias',
+          ruta: '/sistemas',
+          icono: 'dns',
+          orden: 2,
+          activo: true,
+        },
+        {
           codigo: 'SEG_BITACORA',
           nombre: 'Logs de Auditoría',
           descripcion: 'Historial detallado de operaciones y bitácora de seguridad',
           ruta: '/audit-logs',
           icono: 'receipt_long',
-          orden: 2,
+          orden: 3,
           activo: true,
         },
       ],
     },
   ];
+
+  // Seed Systems
+  const defaultSystems = [
+    { codigo: 'SYS_FACTURACION', nombre: 'Sistema de Facturación Electrónica', descripcion: 'Emisión, anulación y timbrado de comprobantes electrónicos' },
+    { codigo: 'SYS_ERP', nombre: 'ERP Financiero y Contable', descripcion: 'Módulos de contabilidad, cuentas por pagar/cobrar y tesorería' },
+    { codigo: 'SYS_PORTAL', nombre: 'Portal de Clientes B2B', descripcion: 'Plataforma web de autogestión de pedidos y facturas para clientes' },
+    { codigo: 'SYS_WMS', nombre: 'WMS Logística y Bodegas', descripcion: 'Control de inventarios, despachos y recepciones en centro de distribución' },
+    { codigo: 'SYS_NOMINA', nombre: 'Nómina y Recursos Humanos', descripcion: 'Cálculo de sueldos, asistencias y beneficios sociales' },
+  ];
+
+  for (const sys of defaultSystems) {
+    await prisma.system.upsert({
+      where: { codigo: sys.codigo },
+      update: { nombre: sys.nombre, descripcion: sys.descripcion, activo: true },
+      create: { ...sys, activo: true },
+    });
+    console.log(`System [${sys.codigo}] upserted`);
+  }
 
   for (const menuData of menusData) {
     const { options, ...mFields } = menuData;

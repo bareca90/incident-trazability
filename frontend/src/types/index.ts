@@ -127,6 +127,16 @@ export interface SolutionStep {
   reviewedBy?: { id: string; username: string };
 }
 
+export interface System {
+  id: number;
+  codigo: string;
+  nombre: string;
+  descripcion?: string;
+  activo: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Incident {
   id: string;
   numero: string;
@@ -139,6 +149,9 @@ export interface Incident {
   ambiente?: string;
   servidor?: string;
   baseDatos?: string;
+  sistemaId?: number;
+  departamentoSolicitante?: string;
+  sistema?: { id: number; codigo: string; nombre: string };
   reportadoPor: string;
   asignadoA?: string;
   fechaReporte: string;

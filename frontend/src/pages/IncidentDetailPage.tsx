@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { incidentService, solutionStepService, userService } from "../services/api";
-import { Incident, SolutionStep, TipoPaso, User, EstadoIncidencia, Prioridad } from "../types";
+import { incidentService, solutionStepService, userService, systemService } from "../services/api";
+import { Incident, SolutionStep, TipoPaso, User, System, EstadoIncidencia } from "../types";
 import { Badge } from "../components/common/Badge";
 import { Modal } from "../components/common/Modal";
 
@@ -10,6 +10,7 @@ export const IncidentDetailPage: React.FC = () => {
   const [incident, setIncident] = useState<Incident | null>(null);
   const [steps, setSteps] = useState<SolutionStep[]>([]);
   const [users, setUsers] = useState<User[]>([]);
+  const [systems, setSystems] = useState<System[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [copiedStepId, setCopiedStepId] = useState<string | null>(null);
 
@@ -20,10 +21,9 @@ export const IncidentDetailPage: React.FC = () => {
   const [incidentForm, setIncidentForm] = useState<{
     titulo: string;
     descripcion: string;
-    prioridad: Prioridad;
     estado: EstadoIncidencia;
-    categoria: string;
-    ambiente: string;
+    sistemaId: number;
+    departamentoSolicitante: string;
     servidor: string;
     baseDatos: string;
     asignadoA: string;
@@ -34,10 +34,9 @@ export const IncidentDetailPage: React.FC = () => {
   }>({
     titulo: "",
     descripcion: "",
-    prioridad: "media",
     estado: "abierta",
-    categoria: "",
-    ambiente: "",
+    sistemaId: 0,
+    departamentoSolicitante: "",
     servidor: "",
     baseDatos: "",
     asignadoA: "",
@@ -115,6 +114,9 @@ export const IncidentDetailPage: React.FC = () => {
     userService.getAll().then((res) => {
       if (res.success) setUsers(res.data);
     });
+    systemService.getAll().then((res) => {
+      if (res.success) setSystems(res.data);
+    });
   }, [id]);
 
   const openEditIncidentModal = () => {
@@ -122,10 +124,9 @@ export const IncidentDetailPage: React.FC = () => {
     setIncidentForm({
       titulo: incident.titulo,
       descripcion: incident.descripcion,
-      prioridad: incident.prioridad,
       estado: incident.estado,
-      categoria: incident.categoria || "",
-      ambiente: incident.ambiente || "",
+      sistemaId: incident.sistemaId || 0,
+      departamentoSolicitante: incident.departamentoSolicitante || "",
       servidor: incident.servidor || "",
       baseDatos: incident.baseDatos || "",
       asignadoA: incident.asignadoA || "",
@@ -147,10 +148,9 @@ export const IncidentDetailPage: React.FC = () => {
       const payload: Partial<Incident> = {
         titulo: incidentForm.titulo,
         descripcion: incidentForm.descripcion,
-        prioridad: incidentForm.prioridad,
         estado: incidentForm.estado,
-        categoria: incidentForm.categoria || undefined,
-        ambiente: incidentForm.ambiente || undefined,
+        sistemaId: incidentForm.sistemaId ? Number(incidentForm.sistemaId) : undefined,
+        departamentoSolicitante: incidentForm.departamentoSolicitante || undefined,
         servidor: incidentForm.servidor || undefined,
         baseDatos: incidentForm.baseDatos || undefined,
         asignadoA: incidentForm.asignadoA || undefined,
@@ -768,7 +768,7 @@ export const IncidentDetailPage: React.FC = () => {
               rows={3}
               value={incidentForm.descripcion}
               onChange={(e) => setIncidentForm({ ...incidentForm, descripcion: e.target.value })}
-              className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs font-mono font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
 
@@ -792,47 +792,38 @@ export const IncidentDetailPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-on-surface-variant uppercase mb-1">
-                Prioridad *
+              <label className="block text-xs font-semibold text-on-surface-variant uppercase mb-1 flex items-center gap-1">
+                <span className="material-symbols-outlined text-sm text-primary">dns</span>
+                <span>Sistema Afectado</span>
               </label>
               <select
-                value={incidentForm.prioridad}
-                onChange={(e) => setIncidentForm({ ...incidentForm, prioridad: e.target.value as Prioridad })}
-                className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs text-on-surface"
+                value={incidentForm.sistemaId}
+                onChange={(e) => setIncidentForm({ ...incidentForm, sistemaId: Number(e.target.value) })}
+                className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs text-on-surface font-semibold"
               >
-                <option value="baja">Baja</option>
-                <option value="media">Media</option>
-                <option value="alta">Alta</option>
-                <option value="critica">Crítica</option>
+                <option value={0}>-- Seleccionar sistema --</option>
+                {systems.map((s) => (
+                  <option key={s.id} value={s.id}>{s.nombre}</option>
+                ))}
               </select>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-on-surface-variant uppercase mb-1">
-                Categoría
+              <label className="block text-xs font-semibold text-on-surface-variant uppercase mb-1 flex items-center gap-1">
+                <span className="material-symbols-outlined text-sm text-primary">domain</span>
+                <span>Departamento Solicitante</span>
               </label>
               <input
                 type="text"
-                value={incidentForm.categoria}
-                onChange={(e) => setIncidentForm({ ...incidentForm, categoria: e.target.value })}
-                className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs text-on-surface"
+                value={incidentForm.departamentoSolicitante}
+                onChange={(e) => setIncidentForm({ ...incidentForm, departamentoSolicitante: e.target.value })}
+                placeholder="Ej: Finanzas, Operaciones..."
+                className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs font-mono font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-on-surface-variant uppercase mb-1">
-                Ambiente
-              </label>
-              <input
-                type="text"
-                value={incidentForm.ambiente}
-                onChange={(e) => setIncidentForm({ ...incidentForm, ambiente: e.target.value })}
-                className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs text-on-surface"
-              />
-            </div>
-
             <div>
               <label className="block text-xs font-semibold text-on-surface-variant uppercase mb-1">
                 Servidor
@@ -856,9 +847,7 @@ export const IncidentDetailPage: React.FC = () => {
                 className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs font-mono text-on-surface"
               />
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-on-surface-variant uppercase mb-1">
                 Asignado A
@@ -876,18 +865,18 @@ export const IncidentDetailPage: React.FC = () => {
                 ))}
               </select>
             </div>
+          </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-on-surface-variant uppercase mb-1">
-                Impacto
-              </label>
-              <input
-                type="text"
-                value={incidentForm.impacto}
-                onChange={(e) => setIncidentForm({ ...incidentForm, impacto: e.target.value })}
-                className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs text-on-surface"
-              />
-            </div>
+          <div>
+            <label className="block text-xs font-semibold text-on-surface-variant uppercase mb-1">
+              Impacto
+            </label>
+            <input
+              type="text"
+              value={incidentForm.impacto}
+              onChange={(e) => setIncidentForm({ ...incidentForm, impacto: e.target.value })}
+              className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline-variant/40 rounded-xl text-xs text-on-surface"
+            />
           </div>
 
           {/* Causa Raíz y Solución */}
@@ -903,7 +892,7 @@ export const IncidentDetailPage: React.FC = () => {
                 value={incidentForm.causaRaiz}
                 onChange={(e) => setIncidentForm({ ...incidentForm, causaRaiz: e.target.value })}
                 placeholder="Causa raíz identificada tras el análisis..."
-                className="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-xs text-on-surface"
+                className="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-xs font-mono font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
             <div>
@@ -913,7 +902,7 @@ export const IncidentDetailPage: React.FC = () => {
                 value={incidentForm.solucionResumida}
                 onChange={(e) => setIncidentForm({ ...incidentForm, solucionResumida: e.target.value })}
                 placeholder="Resumen de acciones que solucionaron la incidencia..."
-                className="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-xs text-on-surface"
+                className="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-xs font-mono font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
           </div>

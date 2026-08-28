@@ -13,6 +13,9 @@ export interface IncidentEntity {
   ambiente?: string | null;
   servidor?: string | null;
   baseDatos?: string | null;
+  sistemaId?: number | null;
+  departamentoSolicitante?: string | null;
+  sistema?: { id: number; codigo: string; nombre: string } | null;
   reportadoPor: string;
   asignadoA?: string | null;
   fechaReporte: Date;
@@ -44,6 +47,8 @@ export interface CreateIncidentDTO {
   ambiente?: string;
   servidor?: string;
   baseDatos?: string;
+  sistemaId?: number;
+  departamentoSolicitante?: string;
   asignadoA?: string;
   impacto?: string;
   causaRaiz?: string;
@@ -59,6 +64,8 @@ export interface UpdateIncidentDTO extends Partial<CreateIncidentDTO> {
   causaRaiz?: string;
   solucionResumida?: string;
   ticketProactivanet?: string;
+  sistemaId?: number;
+  departamentoSolicitante?: string;
   fechaInicio?: Date;
   fechaResolucion?: Date;
   fechaCierre?: Date;
