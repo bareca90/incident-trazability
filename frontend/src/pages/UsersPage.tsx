@@ -3,8 +3,10 @@ import { userService, roleService } from "../services/api";
 import { User, Role, EstadoUsuario } from "../types";
 import { Badge } from "../components/common/Badge";
 import { Modal } from "../components/common/Modal";
+import { useAuth } from "../context/AuthContext";
 
 export const UsersPage: React.FC = () => {
+  const { hasPermission } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
   const [roles, setRoles] = useState<Role[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -181,16 +183,18 @@ export const UsersPage: React.FC = () => {
             Administra cuentas de usuario, estado de accesos y asignación de roles
           </p>
         </div>
-        <button
-          onClick={() => {
-            setCreateUserError(null);
-            setIsUserModalOpen(true);
-          }}
-          className="px-4 py-2.5 bg-primary hover:bg-primary-container text-on-primary font-semibold text-xs rounded-xl shadow-sm transition-colors flex items-center gap-2 cursor-pointer self-start sm:self-auto"
-        >
-          <span className="material-symbols-outlined text-lg">person_add</span>
-          <span>Registrar Usuario</span>
-        </button>
+        {hasPermission("USR_CREAR", "crear") && (
+          <button
+            onClick={() => {
+              setCreateUserError(null);
+              setIsUserModalOpen(true);
+            }}
+            className="px-4 py-2.5 bg-primary hover:bg-primary-container text-on-primary font-semibold text-xs rounded-xl shadow-sm transition-colors flex items-center gap-2 cursor-pointer self-start sm:self-auto"
+          >
+            <span className="material-symbols-outlined text-lg">person_add</span>
+            <span>Registrar Usuario</span>
+          </button>
+        )}
       </div>
 
       {/* Filter */}
@@ -254,27 +258,33 @@ export const UsersPage: React.FC = () => {
                       {u.ultimoLogin ? new Date(u.ultimoLogin).toLocaleDateString() : "Nunca"}
                     </td>
                     <td className="px-5 py-4 text-right space-x-1.5">
-                      <button
-                        onClick={() => openAssignRoleModal(u.id)}
-                        className="px-2.5 py-1.5 bg-secondary-container text-on-secondary-container hover:bg-secondary-container/80 rounded-lg text-[11px] font-semibold transition-colors cursor-pointer"
-                        title="Asignar o remover roles"
-                      >
-                        Roles
-                      </button>
-                      <button
-                        onClick={() => openEditUserModal(u)}
-                        className="p-1.5 text-primary hover:bg-primary-container/20 rounded-lg transition-colors cursor-pointer"
-                        title="Editar usuario"
-                      >
-                        <span className="material-symbols-outlined text-base">edit</span>
-                      </button>
-                      <button
-                        onClick={() => handleDeleteUser(u.id)}
-                        className="p-1.5 text-error hover:bg-error-container/20 rounded-lg transition-colors cursor-pointer"
-                        title="Inactivar usuario"
-                      >
-                        <span className="material-symbols-outlined text-base">block</span>
-                      </button>
+                      {hasPermission("USR_EDITAR", "editar") && (
+                        <button
+                          onClick={() => openEditUserModal(u)}
+                          className="p-1.5 text-primary hover:bg-primary-container/20 rounded-lg transition-colors cursor-pointer"
+                          title="Editar usuario"
+                        >
+                          <span className="material-symbols-outlined text-base">edit</span>
+                        </button>
+                      )}
+                      {hasPermission("SEG_ROLES", "editar") && (
+                        <button
+                          onClick={() => openAssignRoleModal(u.id)}
+                          className="p-1.5 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors cursor-pointer"
+                          title="Gestionar Roles"
+                        >
+                          <span className="material-symbols-outlined text-base">badge</span>
+                        </button>
+                      )}
+                      {hasPermission("USR_LISTA", "eliminar") && (
+                        <button
+                          onClick={() => handleDeleteUser(u.id)}
+                          className="p-1.5 text-error hover:bg-error-container/20 rounded-lg transition-colors cursor-pointer"
+                          title="Inactivar usuario"
+                        >
+                          <span className="material-symbols-outlined text-base">block</span>
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}

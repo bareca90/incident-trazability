@@ -5,6 +5,19 @@ export type TipoPaso = "consulta_sql" | "comando" | "nota" | "archivo" | "config
 export type TipoAdjunto = "imagen" | "documento" | "script" | "log" | "comprimido" | "otro";
 export type TipoAcceso = "ver" | "crear" | "editar" | "eliminar" | "exportar" | "aprobar";
 
+export interface UserPermission {
+  menuOptionId: number;
+  codigoOpcion: string;
+  nombreOpcion: string;
+  ruta?: string;
+  icono?: string;
+  menuId: number;
+  codigoMenu: string;
+  nombreMenu: string;
+  acceso: TipoAcceso;
+  permitido: boolean;
+}
+
 export interface User {
   id: string;
   username: string;
@@ -21,6 +34,7 @@ export interface User {
   updatedAt: string;
   roles?: Role[];
   isAdmin?: boolean;
+  permissions?: UserPermission[];
 }
 
 export interface Role {

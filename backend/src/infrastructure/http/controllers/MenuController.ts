@@ -101,4 +101,22 @@ export class MenuController {
       sendNoContent(res);
     } catch (err) { next(err); }
   }
+
+  async getMyMenus(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user!.userId;
+      const isAdmin = !!req.user!.isAdmin;
+      const menus = await menuUseCases.getUserMenus(userId, isAdmin);
+      sendSuccess(res, menus);
+    } catch (err) { next(err); }
+  }
+
+  async getMyPermissions(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user!.userId;
+      const isAdmin = !!req.user!.isAdmin;
+      const permissions = await menuUseCases.getUserPermissions(userId, isAdmin);
+      sendSuccess(res, permissions);
+    } catch (err) { next(err); }
+  }
 }

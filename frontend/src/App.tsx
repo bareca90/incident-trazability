@@ -8,10 +8,22 @@ import { IncidentsPage } from "./pages/IncidentsPage";
 import { IncidentDetailPage } from "./pages/IncidentDetailPage";
 import { UsersPage } from "./pages/UsersPage";
 import { RolesPage } from "./pages/RolesPage";
+import { MenusPage } from "./pages/MenusPage";
 import { AuditLogsPage } from "./pages/AuditLogsPage";
+import { TipoAcceso } from "./types";
 
-const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated, isLoading } = useAuth();
+interface ProtectedRouteProps {
+  children: React.ReactNode;
+  requiredOption?: string;
+  requiredAccess?: TipoAcceso;
+}
+
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+  children,
+  requiredOption,
+  requiredAccess = "ver",
+}) => {
+  const { isAuthenticated, isLoading, hasPermission } = useAuth();
 
   if (isLoading) {
     return (
@@ -23,6 +35,10 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
+  }
+
+  if (requiredOption && !hasPermission(requiredOption, requiredAccess)) {
+    return <Navigate to="/dashboard" replace />;
   }
 
   return <Layout>{children}</Layout>;
@@ -43,7 +59,7 @@ export const AppContent: React.FC = () => {
       <Route
         path="/incidencias"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requiredOption="INC_LISTA" requiredAccess="ver">
             <IncidentsPage />
           </ProtectedRoute>
         }
@@ -51,7 +67,7 @@ export const AppContent: React.FC = () => {
       <Route
         path="/incidencias/:id"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requiredOption="INC_DETALLE" requiredAccess="ver">
             <IncidentDetailPage />
           </ProtectedRoute>
         }
@@ -59,7 +75,7 @@ export const AppContent: React.FC = () => {
       <Route
         path="/usuarios"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requiredOption="USR_LISTA" requiredAccess="ver">
             <UsersPage />
           </ProtectedRoute>
         }
@@ -67,15 +83,23 @@ export const AppContent: React.FC = () => {
       <Route
         path="/roles"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requiredOption="SEG_ROLES" requiredAccess="ver">
             <RolesPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/menus"
+        element={
+          <ProtectedRoute requiredOption="CONF_MENUS" requiredAccess="ver">
+            <MenusPage />
           </ProtectedRoute>
         }
       />
       <Route
         path="/audit-logs"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requiredOption="SEG_BITACORA" requiredAccess="ver">
             <AuditLogsPage />
           </ProtectedRoute>
         }

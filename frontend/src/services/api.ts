@@ -199,14 +199,50 @@ export const roleService = {
   },
 };
 
-// Endpoints de MenÃºs
+// Endpoints de Menús
 export const menuService = {
   getAllMenus: async () => {
     const res = await api.get<ApiResponse<Menu[]>>("/menus");
     return res.data;
   },
+  createMenu: async (data: Partial<Menu>) => {
+    const res = await api.post<ApiResponse<Menu>>("/menus", data);
+    return res.data;
+  },
+  updateMenu: async (id: number, data: Partial<Menu>) => {
+    const res = await api.put<ApiResponse<Menu>>(`/menus/${id}`, data);
+    return res.data;
+  },
+  deleteMenu: async (id: number) => {
+    const res = await api.delete(`/menus/${id}`);
+    return res.data;
+  },
   getAllOptions: async () => {
     const res = await api.get<ApiResponse<MenuOption[]>>("/menus/options/all");
+    return res.data;
+  },
+  getMenuOptions: async (menuId: number) => {
+    const res = await api.get<ApiResponse<MenuOption[]>>(`/menus/${menuId}/options`);
+    return res.data;
+  },
+  createOption: async (data: Partial<MenuOption>) => {
+    const res = await api.post<ApiResponse<MenuOption>>("/menus/options", data);
+    return res.data;
+  },
+  updateOption: async (id: number, data: Partial<MenuOption>) => {
+    const res = await api.put<ApiResponse<MenuOption>>(`/menus/options/${id}`, data);
+    return res.data;
+  },
+  deleteOption: async (id: number) => {
+    const res = await api.delete(`/menus/options/${id}`);
+    return res.data;
+  },
+  getMyMenus: async () => {
+    const res = await api.get<ApiResponse<Menu[]>>("/menus/my-menus");
+    return res.data;
+  },
+  getMyPermissions: async () => {
+    const res = await api.get<ApiResponse<any[]>>("/menus/my-permissions");
     return res.data;
   },
 };

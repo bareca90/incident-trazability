@@ -17,17 +17,32 @@ export const authorize = (acceso: string, menuOptionCodigo?: string) =>
 
       if (!menuOptionCodigo) return next(); // Solo autenticación
 
-      // Consultar vista de permisos efectivos
-      const result = await prisma.$queryRaw<Array<{ permitido: boolean }>>`
-        SELECT permitido
-        FROM trazabilidad.v_user_effective_permissions
-        WHERE user_id = ${req.user.userId}::uuid
-          AND opcion_codigo = ${menuOptionCodigo}
-          AND acceso = ${acceso}::trazabilidad.tipo_acceso
-        LIMIT 1
-      `;
+      // Verificar si el usuario tiene un rol activo con permiso permitido
+      const hasPermission = await prisma.roleOptionAccess.findFirst({
+        where: {
+          permitido: true,
+          acceso: acceso as any,
+          menuOption: {
+            codigo: menuOptionCodigo,
+            activo: true,
+          },
+          role: {
+            activo: true,
+            userRoles: {
+              some: {
+                userId: req.user.userId,
+                activo: true,
+                OR: [
+                  { vigenciaHasta: null },
+                  { vigenciaHasta: { gte: new Date() } },
+                ],
+              },
+            },
+          },
+        },
+      });
 
-      if (!result.length || !result[0].permitido) {
+      if (!hasPermission) {
         throw new ForbiddenError(`No tienes permiso para realizar esta acción (${acceso} en ${menuOptionCodigo})`);
       }
       next();

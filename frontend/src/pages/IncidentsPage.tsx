@@ -4,8 +4,10 @@ import { incidentService, userService } from "../services/api";
 import { Incident, User, EstadoIncidencia, Prioridad } from "../types";
 import { Badge } from "../components/common/Badge";
 import { Modal } from "../components/common/Modal";
+import { useAuth } from "../context/AuthContext";
 
 export const IncidentsPage: React.FC = () => {
+  const { hasPermission } = useAuth();
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -235,16 +237,18 @@ export const IncidentsPage: React.FC = () => {
             Registro con correlativo interno y ticket Proactivanet, seguimiento de pasos y trazabilidad
           </p>
         </div>
-        <button
-          onClick={() => {
-            setCreateError(null);
-            setIsCreateModalOpen(true);
-          }}
-          className="px-4 py-2.5 bg-primary hover:bg-primary-container text-on-primary font-semibold text-xs rounded-xl shadow-sm transition-colors flex items-center gap-2 cursor-pointer self-start sm:self-auto"
-        >
-          <span className="material-symbols-outlined text-lg">add</span>
-          <span>Nueva Incidencia / Solución</span>
-        </button>
+        {hasPermission("INC_NUEVA", "crear") && (
+          <button
+            onClick={() => {
+              setCreateError(null);
+              setIsCreateModalOpen(true);
+            }}
+            className="px-4 py-2.5 bg-primary hover:bg-primary-container text-on-primary font-semibold text-xs rounded-xl shadow-sm transition-colors flex items-center gap-2 cursor-pointer self-start sm:self-auto"
+          >
+            <span className="material-symbols-outlined text-lg">add</span>
+            <span>Nueva Incidencia / Solución</span>
+          </button>
+        )}
       </div>
 
       {/* Filter Bar */}
@@ -370,20 +374,24 @@ export const IncidentsPage: React.FC = () => {
                         <span>Pasos</span>
                         <span className="material-symbols-outlined text-sm">arrow_forward</span>
                       </Link>
-                      <button
-                        onClick={() => openEditModal(inc)}
-                        className="p-1.5 text-primary hover:bg-primary-container/20 rounded-lg transition-colors cursor-pointer"
-                        title="Editar cabecera / solución"
-                      >
-                        <span className="material-symbols-outlined text-base">edit</span>
-                      </button>
-                      <button
-                        onClick={() => handleDeleteIncident(inc.id, inc.numero)}
-                        className="p-1.5 text-error hover:bg-error-container/20 rounded-lg transition-colors cursor-pointer"
-                        title="Eliminar incidencia"
-                      >
-                        <span className="material-symbols-outlined text-base">delete</span>
-                      </button>
+                      {hasPermission("INC_DETALLE", "editar") && (
+                        <button
+                          onClick={() => openEditModal(inc)}
+                          className="p-1.5 text-primary hover:bg-primary-container/20 rounded-lg transition-colors cursor-pointer"
+                          title="Editar cabecera / solución"
+                        >
+                          <span className="material-symbols-outlined text-base">edit</span>
+                        </button>
+                      )}
+                      {hasPermission("INC_LISTA", "eliminar") && (
+                        <button
+                          onClick={() => handleDeleteIncident(inc.id, inc.numero)}
+                          className="p-1.5 text-error hover:bg-error-container/20 rounded-lg transition-colors cursor-pointer"
+                          title="Eliminar incidencia"
+                        >
+                          <span className="material-symbols-outlined text-base">delete</span>
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}

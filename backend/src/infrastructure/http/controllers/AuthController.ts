@@ -10,8 +10,11 @@ import { PrismaRoleRepository } from "../../database/repositories/PrismaRoleRepo
 import { auditLogService } from "../../services/AuditLogService";
 import { UnauthorizedError } from "../../../shared/errors/AppError";
 
+import { PrismaMenuRepository } from "../../database/repositories/PrismaMenuRepository";
+
 const userRepo = new PrismaUserRepository();
 const roleRepo = new PrismaRoleRepository();
+const menuRepo = new PrismaMenuRepository();
 
 const loginSchema = z.object({
   email:    z.string().email("Email invÃ¡lido"),
@@ -58,7 +61,9 @@ export class AuthController {
     try {
       const user = await userRepo.findById(req.user!.userId);
       const roles = await roleRepo.findUserRoles(req.user!.userId);
-      sendSuccess(res, { ...user, passwordHash: undefined, roles });
+      const isAdmin = roles.some((r) => r.esAdmin);
+      const permissions = await menuRepo.findUserPermissions(req.user!.userId, isAdmin);
+      sendSuccess(res, { ...user, passwordHash: undefined, roles, isAdmin, permissions });
     } catch (err) { next(err); }
   }
 

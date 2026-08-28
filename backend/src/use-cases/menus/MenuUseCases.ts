@@ -37,4 +37,12 @@ export class MenuUseCases {
     if (!await this.repo.findMenuOptionById(id)) throw new NotFoundError("Opción de menú");
     await this.repo.deleteMenuOption(id);
   }
+
+  async getUserMenus(userId: string, isAdmin: boolean) {
+    return this.repo.findUserMenus(userId, isAdmin);
+  }
+
+  async getUserPermissions(userId: string, isAdmin: boolean) {
+    return this.repo.findUserPermissions(userId, isAdmin);
+  }
 }
