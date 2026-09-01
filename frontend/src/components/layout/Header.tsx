@@ -1,9 +1,11 @@
 import React from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useSidebar } from "../../context/SidebarContext";
 
 export const Header: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
+  const { toggleSidebar } = useSidebar();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -14,6 +16,15 @@ export const Header: React.FC = () => {
   return (
     <header className="sticky top-0 z-30 h-16 bg-surface/90 backdrop-blur-md border-b border-outline-variant/30 px-6 flex items-center justify-between shadow-xs">
       <div className="flex items-center gap-4">
+        {/* Botón hamburguesa */}
+        <button
+          id="sidebar-toggle-btn"
+          onClick={toggleSidebar}
+          aria-label="Toggle sidebar"
+          className="flex items-center justify-center w-9 h-9 rounded-lg border border-outline-variant/40 text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all duration-200"
+        >
+          <span className="material-symbols-outlined text-xl">menu</span>
+        </button>
         <h2 className="text-lg font-semibold text-on-surface">DevTrace Platform</h2>
       </div>
 

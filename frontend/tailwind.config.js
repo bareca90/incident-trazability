@@ -1,6 +1,12 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  safelist: [
+    "md:ml-[72px]",
+    "md:ml-[280px]",
+    "md:w-[72px]",
+    "md:w-[280px]",
+  ],
   darkMode: "class",
   theme: {
     extend: {
@@ -52,6 +58,9 @@ export default {
         "inverse-on-surface": "#eff1f3",
         "surface-dim": "#d8dadc",
         "surface-container-high": "#e6e8ea"
+      },
+      maxWidth: {
+        "7xl": "100%",
       },
       borderRadius: {
         DEFAULT: "0.25rem",
