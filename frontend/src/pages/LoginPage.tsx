@@ -4,8 +4,8 @@ import { useAuth } from "../context/AuthContext";
 import { authService } from "../services/api";
 
 export const LoginPage: React.FC = () => {
-  const [email, setEmail] = useState("admin@trazabilidad.com");
-  const [password, setPassword] = useState("Admin123!");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -135,18 +135,13 @@ export const LoginPage: React.FC = () => {
             </button>
           </form>
 
-          {/* Seed credentials hint */}
-          <div className="mt-8 pt-6 border-t border-outline-variant/20 text-center">
-            <p className="text-[11px] text-on-surface-variant font-mono">
-              Credenciales: <span className="font-bold text-primary">admin@trazabilidad.com</span> / <span className="font-bold text-primary">Admin123!</span>
-            </p>
-          </div>
+
         </div>
       </main>
 
       {/* Footer */}
       <footer className="text-center py-4 text-xs text-on-surface-variant/70">
-        &copy; {new Date().getFullYear()} DevTrace Incidencias. Todos los derechos reservados.
+        &copy; {new Date().getFullYear()} Sistemas Promarisco. Todos los derechos reservados.
       </footer>
     </div>
   );
