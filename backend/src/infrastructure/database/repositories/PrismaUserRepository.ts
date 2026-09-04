@@ -78,6 +78,52 @@ export class PrismaUserRepository implements IUserRepository {
   }
 
   async updatePassword(id: string, passwordHash: string): Promise<void> {
-    await prisma.user.update({ where: { id }, data: { passwordHash, mustChangePwd: false } });
+    await prisma.user.update({ where: { id }, data: { passwordHash, mustChangePwd: false, intentosLogin: 0 } });
+  }
+
+  async forcePasswordChange(id: string, mustChange: boolean): Promise<void> {
+    await prisma.user.update({ where: { id }, data: { mustChangePwd: mustChange } });
+  }
+
+  async unlockUser(id: string): Promise<void> {
+    await prisma.user.update({
+      where: { id },
+      data: {
+        intentosLogin: 0,
+        estado: "activo",
+      },
+    });
+  }
+
+  async resetPassword(id: string, passwordHash: string, mustChangePwd: boolean = true): Promise<void> {
+    await prisma.user.update({
+      where: { id },
+      data: {
+        passwordHash,
+        mustChangePwd,
+        intentosLogin: 0,
+      },
+    });
+  }
+
+  async addPasswordHistory(userId: string, passwordHash: string, motivo: string = "cambio_usuario"): Promise<void> {
+    await prisma.passwordHistory.create({
+      data: {
+        userId,
+        passwordHash,
+        motivo,
+      },
+    });
+  }
+
+  async getRecentPasswordHashes(userId: string, limit: number = 5): Promise<string[]> {
+    const history = await prisma.passwordHistory.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      take: limit,
+      select: { passwordHash: true },
+    });
+    return history.map((h) => h.passwordHash);
   }
 }
+

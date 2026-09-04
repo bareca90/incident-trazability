@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { userService, roleService } from "../services/api";
 import { User, Role, EstadoUsuario } from "../types";
 import { Badge } from "../components/common/Badge";
@@ -7,6 +8,7 @@ import { useAuth } from "../context/AuthContext";
 
 export const UsersPage: React.FC = () => {
   const { hasPermission } = useAuth();
+  const navigate = useNavigate();
   const [users, setUsers] = useState<User[]>([]);
   const [roles, setRoles] = useState<Role[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -183,18 +185,27 @@ export const UsersPage: React.FC = () => {
             Administra cuentas de usuario, estado de accesos y asignación de roles
           </p>
         </div>
-        {hasPermission("USR_CREAR", "crear") && (
+        <div className="flex items-center gap-2 self-start sm:self-auto">
           <button
-            onClick={() => {
-              setCreateUserError(null);
-              setIsUserModalOpen(true);
-            }}
-            className="px-4 py-2.5 bg-primary hover:bg-primary-container text-on-primary font-semibold text-xs rounded-xl shadow-sm transition-colors flex items-center gap-2 cursor-pointer self-start sm:self-auto"
+            onClick={() => navigate("/seguridad/claves")}
+            className="px-3.5 py-2.5 bg-surface-container-low hover:bg-surface-container border border-outline-variant/40 text-on-surface font-semibold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-2 cursor-pointer"
           >
-            <span className="material-symbols-outlined text-lg">person_add</span>
-            <span>Registrar Usuario</span>
+            <span className="material-symbols-outlined text-lg text-primary">admin_panel_settings</span>
+            <span>Seguridad de Claves</span>
           </button>
-        )}
+          {hasPermission("USR_CREAR", "crear") && (
+            <button
+              onClick={() => {
+                setCreateUserError(null);
+                setIsUserModalOpen(true);
+              }}
+              className="px-4 py-2.5 bg-primary hover:bg-primary-container text-on-primary font-semibold text-xs rounded-xl shadow-sm transition-colors flex items-center gap-2 cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-lg">person_add</span>
+              <span>Registrar Usuario</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Filter */}

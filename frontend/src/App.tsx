@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { Layout } from "./components/layout/Layout";
 import { LoginPage } from "./pages/LoginPage";
@@ -11,20 +11,25 @@ import { RolesPage } from "./pages/RolesPage";
 import { MenusPage } from "./pages/MenusPage";
 import { SystemsPage } from "./pages/SystemsPage";
 import { AuditLogsPage } from "./pages/AuditLogsPage";
+import { ChangePasswordPage } from "./pages/ChangePasswordPage";
+import { PasswordManagementPage } from "./pages/PasswordManagementPage";
 import { TipoAcceso } from "./types";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
   requiredOption?: string;
   requiredAccess?: TipoAcceso;
+  allowMustChange?: boolean;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
   requiredOption,
   requiredAccess = "ver",
+  allowMustChange = false,
 }) => {
-  const { isAuthenticated, isLoading, hasPermission } = useAuth();
+  const { user, isAuthenticated, isLoading, hasPermission } = useAuth();
+  const location = useLocation();
 
   if (isLoading) {
     return (
@@ -38,12 +43,18 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to="/login" replace />;
   }
 
+  // Si el usuario debe cambiar clave obligatoriamente y no está en la ruta de cambio, forzar navegación
+  if (user?.mustChangePwd && !allowMustChange && location.pathname !== "/cambio-clave") {
+    return <Navigate to="/cambio-clave" replace />;
+  }
+
   if (requiredOption && !hasPermission(requiredOption, requiredAccess)) {
     return <Navigate to="/dashboard" replace />;
   }
 
   return <Layout>{children}</Layout>;
 };
+
 
 export const AppContent: React.FC = () => {
   return (
@@ -110,6 +121,22 @@ export const AppContent: React.FC = () => {
         element={
           <ProtectedRoute requiredOption="SEG_BITACORA" requiredAccess="ver">
             <AuditLogsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/cambio-clave"
+        element={
+          <ProtectedRoute allowMustChange>
+            <ChangePasswordPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/seguridad/claves"
+        element={
+          <ProtectedRoute requiredOption="USR_LISTA" requiredAccess="ver">
+            <PasswordManagementPage />
           </ProtectedRoute>
         }
       />

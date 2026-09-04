@@ -18,4 +18,10 @@ export interface IUserRepository {
   resetLoginAttempts(id: string): Promise<void>;
   updateLastLogin(id: string): Promise<void>;
   updatePassword(id: string, passwordHash: string): Promise<void>;
+  forcePasswordChange(id: string, mustChange: boolean): Promise<void>;
+  unlockUser(id: string): Promise<void>;
+  resetPassword(id: string, passwordHash: string, mustChangePwd?: boolean): Promise<void>;
+  addPasswordHistory(userId: string, passwordHash: string, motivo?: string): Promise<void>;
+  getRecentPasswordHashes(userId: string, limit?: number): Promise<string[]>;
 }
+

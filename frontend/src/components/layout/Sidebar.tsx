@@ -27,6 +27,12 @@ export const Sidebar: React.FC = () => {
       visible: hasPermission("USR_LISTA", "ver"),
     },
     {
+      name: "Seguridad de Claves",
+      href: "/seguridad/claves",
+      icon: "password",
+      visible: hasPermission("USR_LISTA", "ver") || !!user?.isAdmin,
+    },
+    {
       name: "Roles y Permisos",
       href: "/roles",
       icon: "admin_panel_settings",
@@ -50,9 +56,16 @@ export const Sidebar: React.FC = () => {
       icon: "receipt_long",
       visible: hasPermission("SEG_BITACORA", "ver"),
     },
+    {
+      name: "Cambiar Contraseña",
+      href: "/cambio-clave",
+      icon: "key",
+      visible: true,
+    },
   ];
 
   const visibleNav = navigation.filter((item) => item.visible);
+
 
   return (
     <>

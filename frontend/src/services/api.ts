@@ -153,7 +153,24 @@ export const userService = {
     const res = await api.delete(`/users/${id}`);
     return res.data;
   },
+  resetPassword: async (id: string, newPassword: string, mustChangePwd: boolean = true) => {
+    const res = await api.post<ApiResponse<null>>(`/users/${id}/reset-password`, { newPassword, mustChangePwd });
+    return res.data;
+  },
+  forcePasswordChange: async (id: string, mustChange: boolean = true) => {
+    const res = await api.post<ApiResponse<null>>(`/users/${id}/force-password-change`, { mustChange });
+    return res.data;
+  },
+  unlock: async (id: string) => {
+    const res = await api.post<ApiResponse<null>>(`/users/${id}/unlock`);
+    return res.data;
+  },
+  getPasswordLogs: async (params?: Record<string, unknown>) => {
+    const res = await api.get<ApiResponse<AuditLog[]>>("/users/password-logs", { params });
+    return res.data;
+  },
 };
+
 
 // Endpoints de Roles y Permisos
 export const roleService = {
