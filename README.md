@@ -38,6 +38,7 @@
 - [Módulos y Flujos de Trabajo](#-módulos-y-flujos-de-trabajo)
 - [Seguridad y Control de Acceso (RBAC)](#-seguridad-y-control-de-acceso-rbac)
 - [Endpoints de la API](#-endpoints-de-la-api)
+- [Despliegue en Producción (Docker)](#-despliegue-en-producción-docker)
 - [Scripts Disponibles](#-scripts-disponibles)
 - [Créditos y Licencia](#-créditos-y-licencia)
 
@@ -346,6 +347,27 @@ La API REST expone los siguientes recursos bajo el prefijo `/api`:
 | `GET` | `/roles` | Listado y configuración de roles y matriz | Permiso `SEG_ROLES` |
 | `GET` | `/menus` | Árbol dinámico de menús según permisos | Autenticado |
 | `GET` | `/audit-logs` | Consulta histórica de bitácora de auditoría | Permiso `SEG_BITACORA` |
+
+---
+
+## 🚢 Despliegue en Producción (Docker)
+
+La aplicación está completamente dockerizada para despliegue en un solo paso en **Ubuntu Server**:
+
+```bash
+# 1. Configurar variables de entorno de producción
+cp .env.production.example .env
+nano .env
+
+# 2. Levantar la pila completa (PostgreSQL + Backend + Frontend Nginx)
+docker compose -f docker-compose.prod.yml up -d --build
+
+# 3. Verificar estado de los contenedores
+docker compose -f docker-compose.prod.yml ps
+```
+
+> 📖 **Para ver la guía completa paso a paso con configuración de SSH, Firewall (UFW), Nginx con HTTPS/SSL y respaldos automáticos, consulta:**  
+> **👉 [DEPLOY_UBUNTU.md](./DEPLOY_UBUNTU.md)**
 
 ---
 

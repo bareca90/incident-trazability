@@ -1,0 +1,123 @@
+version: "3.9"
+
+services:
+  # ============================================================
+  # 1. Base de Datos PostgreSQL 16
+  # ============================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: devtrace-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-Sistemas123456}
+      POSTGRES_DB: ${POSTGRES_DB:-trazabilidad_db}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+      TZ: "America/Guayaquil"
+      PGTZ: "America/Guayaquil"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-trazabilidad_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - devtrace_network
+    # Por seguridad en producción, solo accesible internamente o vía localhost:
+    ports:
+      - "127.0.0.1:5432:5432"
+    command: >
+      postgres
+        -c max_connections=150
+        -c shared_buffers=256MB
+        -c effective_cache_size=768MB
+        -c work_mem=16MB
+        -c maintenance_work_mem=64MB
+        -c log_timezone=America/Guayaquil
+
+  # ============================================================
+  # 2. Servidor API Backend (Node.js + Express + Prisma)
+  # ============================================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: devtrace-backend
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3838
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-Sistemas123456}@postgres:5432/${POSTGRES_DB:-trazabilidad_db}?schema=trazabilidad"
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-super_secreto_acceso_produccion_muy_seguro_2026}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-super_secreto_refresh_produccion_muy_seguro_2026}
+      JWT_ACCESS_EXPIRES_IN: ${JWT_ACCESS_EXPIRES_IN:-15m}
+      JWT_REFRESH_EXPIRES_IN: ${JWT_REFRESH_EXPIRES_IN:-7d}
+      UPLOAD_DIR: /app/uploads
+      MAX_FILE_SIZE_MB: ${MAX_FILE_SIZE_MB:-30}
+      CORS_ORIGIN: "*"
+      RATE_LIMIT_WINDOW_MS: 900000
+      RATE_LIMIT_MAX: 500
+    volumes:
+      - backend_uploads:/app/uploads
+    networks:
+      - devtrace_network
+    expose:
+      - "3838"
+
+  # ============================================================
+  # 3. Servidor Web Frontend (React + Vite + Nginx)
+  # ============================================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: devtrace-frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "${HTTP_PORT:-80}:80"
+    networks:
+      - devtrace_network
+
+  # ============================================================
+  # 4. Herramienta de Administración DB (Opcional: profile "tools")
+  # ============================================================
+  adminer:
+    image: adminer:latest
+    container_name: devtrace-adminer
+    restart: unless-stopped
+    profiles:
+      - tools
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "${ADMINER_PORT:-8080}:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+    networks:
+      - devtrace_network
+
+# ============================================================
+# Volúmenes Persistentes
+# ============================================================
+volumes:
+  postgres_data:
+    name: devtrace_postgres_data
+  backend_uploads:
+    name: devtrace_backend_uploads
+
+# ============================================================
+# Red Interna
+# ============================================================
+networks:
+  devtrace_network:
+    name: devtrace_network
+    driver: bridge
