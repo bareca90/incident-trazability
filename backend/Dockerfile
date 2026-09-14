@@ -5,6 +5,9 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+# OpenSSL es requerido por el motor de Prisma para detectar la versión correcta (libssl)
+RUN apk add --no-cache openssl
+
 # Instalar dependencias de desarrollo y compilación
 COPY package*.json ./
 COPY prisma ./prisma/
@@ -29,8 +32,8 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Instalar dumb-init para gestión adecuada de señales POSIX
-RUN apk add --no-cache dumb-init
+# Instalar dumb-init y OpenSSL (requerido por el motor de Prisma en tiempo de ejecución)
+RUN apk add --no-cache dumb-init openssl
 
 # Copiar manifiestos y dependencias de producción
 COPY package*.json ./
