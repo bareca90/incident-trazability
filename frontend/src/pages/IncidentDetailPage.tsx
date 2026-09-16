@@ -671,40 +671,64 @@ export const IncidentDetailPage: React.FC = () => {
                       <p className="text-[11px] font-semibold text-on-surface-variant uppercase mb-2">
                         Archivos Adjuntos de Soporte ({step.attachments.length})
                       </p>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-                        {step.attachments.map((att) => (
-                          <div
-                            key={att.id}
-                            className="flex items-center justify-between p-2.5 bg-surface-container-lowest border border-outline-variant/30 rounded-xl text-xs shadow-xs"
-                          >
-                            <a
-                              href={`/uploads/${att.nombreStorage}`}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="flex items-center gap-2 min-w-0 flex-1 hover:text-primary transition-colors"
-                              title={`Descargar / Ver: ${att.nombreOriginal}`}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                        {step.attachments.map((att) => {
+                          const isImage = att.tipo === "imagen" || (att.mimeType && att.mimeType.startsWith("image/"));
+                          const fileUrl = `/uploads/${att.nombreStorage}`;
+                          return (
+                            <div
+                              key={att.id}
+                              className="group relative flex flex-col p-2 bg-surface-container-lowest border border-outline-variant/30 hover:border-primary/40 rounded-xl text-xs shadow-xs transition-all"
                             >
-                              <span className="material-symbols-outlined text-base text-primary">
-                                {att.tipo === "imagen" ? "image" : att.tipo === "script" ? "terminal" : "description"}
-                              </span>
-                              <div className="min-w-0 flex-1">
-                                <p className="font-medium text-on-surface truncate text-xs">{att.nombreOriginal}</p>
-                                {att.tamanoBytes && (
-                                  <p className="text-[10px] text-on-surface-variant font-mono">
-                                    {formatFileSize(att.tamanoBytes)}
-                                  </p>
-                                )}
+                              {isImage && (
+                                <a
+                                  href={fileUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="block w-full h-28 overflow-hidden rounded-lg bg-surface-container mb-2 relative group-hover:opacity-95 transition-opacity"
+                                >
+                                  <img
+                                    src={fileUrl}
+                                    alt={att.nombreOriginal}
+                                    className="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-300"
+                                    onError={(e) => {
+                                      // Fallback en caso de error de carga
+                                      (e.target as HTMLElement).style.display = "none";
+                                    }}
+                                  />
+                                </a>
+                              )}
+                              <div className="flex items-center justify-between gap-1.5 w-full">
+                                <a
+                                  href={fileUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="flex items-center gap-2 min-w-0 flex-1 hover:text-primary transition-colors"
+                                  title={`Descargar / Abrir: ${att.nombreOriginal}`}
+                                >
+                                  <span className="material-symbols-outlined text-base text-primary shrink-0">
+                                    {isImage ? "image" : att.tipo === "script" ? "terminal" : "description"}
+                                  </span>
+                                  <div className="min-w-0 flex-1">
+                                    <p className="font-medium text-on-surface truncate text-xs">{att.nombreOriginal}</p>
+                                    {att.tamanoBytes && (
+                                      <p className="text-[10px] text-on-surface-variant font-mono">
+                                        {formatFileSize(att.tamanoBytes)}
+                                      </p>
+                                    )}
+                                  </div>
+                                </a>
+                                <button
+                                  onClick={() => handleDeleteAttachment(att.id)}
+                                  className="p-1 text-on-surface-variant/60 hover:text-error transition-colors rounded-lg cursor-pointer shrink-0"
+                                  title="Eliminar adjunto"
+                                >
+                                  <span className="material-symbols-outlined text-base">close</span>
+                                </button>
                               </div>
-                            </a>
-                            <button
-                              onClick={() => handleDeleteAttachment(att.id)}
-                              className="p-1 text-on-surface-variant/60 hover:text-error transition-colors rounded-lg cursor-pointer"
-                              title="Eliminar adjunto"
-                            >
-                              <span className="material-symbols-outlined text-base">close</span>
-                            </button>
-                          </div>
-                        ))}
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
