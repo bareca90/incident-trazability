@@ -19,5 +19,6 @@ router.delete("/:id", authorize("eliminar", "INC_LISTA"), (req, res, next) => co
 // Solution Steps asociados a la incidencia
 router.get("/:incidentId/steps", authorize("ver", "SOL_PASOS"), (req, res, next) => stepController.getByIncident(req, res, next));
 router.post("/:incidentId/steps", authorize("crear", "SOL_PASOS"), (req, res, next) => stepController.create(req, res, next));
+router.put("/:incidentId/steps/reorder", authorize("editar", "SOL_PASOS"), (req, res, next) => stepController.reorder(req, res, next));
 
 export default router;

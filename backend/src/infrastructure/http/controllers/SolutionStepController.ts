@@ -7,6 +7,7 @@ import { PrismaIncidentRepository } from "../../database/repositories/PrismaInci
 import { CreateSolutionStepUseCase } from "../../../use-cases/solution-steps/CreateSolutionStepUseCase";
 import { UpdateSolutionStepUseCase } from "../../../use-cases/solution-steps/UpdateSolutionStepUseCase";
 import { UploadAttachmentUseCase } from "../../../use-cases/solution-steps/UploadAttachmentUseCase";
+import { ReorderSolutionStepsUseCase } from "../../../use-cases/solution-steps/ReorderSolutionStepsUseCase";
 import { NotFoundError, ValidationError } from "../../../shared/errors/AppError";
 
 const stepRepo = new PrismaSolutionStepRepository();
@@ -96,6 +97,15 @@ export class SolutionStepController {
       const attachmentId = String(req.params.attachmentId);
       await stepRepo.deleteAttachment(attachmentId);
       sendNoContent(res);
+    } catch (err) { next(err); }
+  }
+
+  async reorder(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const incidentId = String(req.params.incidentId);
+      const { stepIds } = z.object({ stepIds: z.array(z.string()) }).parse(req.body);
+      const reordered = await new ReorderSolutionStepsUseCase(stepRepo, incidentRepo).execute(incidentId, stepIds);
+      sendSuccess(res, reordered, "Pasos reordenados correctamente");
     } catch (err) { next(err); }
   }
 }

@@ -9,6 +9,7 @@ export interface ISolutionStepRepository {
   createBatch(incidentId: string, steps: CreateSolutionStepDTO[]): Promise<SolutionStepEntity[]>;
   update(id: string, data: Partial<CreateSolutionStepDTO>): Promise<SolutionStepEntity>;
   delete(id: string): Promise<void>;
+  reorderSteps(incidentId: string, orderedStepIds: string[]): Promise<SolutionStepEntity[]>;
   // Attachments
   findAttachments(stepId: string): Promise<StepAttachmentEntity[]>;
   findAttachmentById(id: string): Promise<StepAttachmentEntity | null>;

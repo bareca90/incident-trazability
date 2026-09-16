@@ -57,6 +57,27 @@ export class PrismaSolutionStepRepository implements ISolutionStepRepository {
     await prisma.solutionStep.delete({ where: { id } });
   }
 
+  async reorderSteps(incidentId: string, orderedStepIds: string[]): Promise<SolutionStepEntity[]> {
+    await prisma.$transaction(async (tx) => {
+      // 1. Temporarily assign negative numbers to prevent @@unique([incidentId, numeroPaso]) conflicts
+      for (let i = 0; i < orderedStepIds.length; i++) {
+        await tx.solutionStep.update({
+          where: { id: orderedStepIds[i] },
+          data: { numeroPaso: -(i + 1) },
+        });
+      }
+      // 2. Assign final positive step sequence numbers
+      for (let i = 0; i < orderedStepIds.length; i++) {
+        await tx.solutionStep.update({
+          where: { id: orderedStepIds[i] },
+          data: { numeroPaso: i + 1 },
+        });
+      }
+    });
+
+    return this.findByIncident(incidentId);
+  }
+
   async findAttachments(stepId: string): Promise<StepAttachmentEntity[]> {
     return prisma.stepAttachment.findMany({ where: { stepId } }) as any;
   }
