@@ -116,6 +116,10 @@ export const solutionStepService = {
     const res = await api.delete(`/solution-steps/${id}`);
     return res.data;
   },
+  reorder: async (incidentId: string, stepIds: string[]) => {
+    const res = await api.put<ApiResponse<SolutionStep[]>>(`/incidents/${incidentId}/steps/reorder`, { stepIds });
+    return res.data;
+  },
   uploadAttachment: async (stepId: string, file: File, descripcion?: string) => {
     const formData = new FormData();
     formData.append("file", file);

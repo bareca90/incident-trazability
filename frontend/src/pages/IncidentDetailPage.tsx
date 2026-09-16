@@ -88,6 +88,34 @@ export const IncidentDetailPage: React.FC = () => {
   const [attachmentDesc, setAttachmentDesc] = useState("");
   const [attachmentError, setAttachmentError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isReordering, setIsReordering] = useState(false);
+
+  const handleMoveStep = async (stepId: string, targetIndex: number) => {
+    const currentIndex = steps.findIndex((s) => s.id === stepId);
+    if (currentIndex === -1 || targetIndex < 0 || targetIndex >= steps.length || currentIndex === targetIndex) return;
+
+    const newSteps = [...steps];
+    const [movedStep] = newSteps.splice(currentIndex, 1);
+    newSteps.splice(targetIndex, 0, movedStep);
+
+    // Actualización local optimista
+    const reorderedLocal = newSteps.map((s, idx) => ({ ...s, numeroPaso: idx + 1 }));
+    setSteps(reorderedLocal);
+
+    try {
+      setIsReordering(true);
+      const res = await solutionStepService.reorder(id!, reorderedLocal.map((s) => s.id));
+      if (res.data) {
+        setSteps(res.data);
+      }
+    } catch (err: any) {
+      console.error("Error al reordenar pasos:", err);
+      alert(err.response?.data?.message || err.message || "Error al reordenar los pasos");
+      loadIncidentDetail();
+    } finally {
+      setIsReordering(false);
+    }
+  };
 
   const loadIncidentDetail = async () => {
     if (!id) return;
@@ -524,8 +552,8 @@ export const IncidentDetailPage: React.FC = () => {
             </button>
           </div>
         ) : (
-          <div className="space-y-6 relative before:absolute before:left-5 before:top-3 before:bottom-3 before:w-0.5 before:bg-outline-variant/40">
-            {steps.map((step) => (
+          <div className="max-h-[620px] overflow-y-auto pr-3 space-y-6 relative before:absolute before:left-5 before:top-3 before:bottom-3 before:w-0.5 before:bg-outline-variant/40 custom-scrollbar">
+            {steps.map((step, index) => (
               <div key={step.id} className="relative pl-12 group">
                 {/* Timeline Circle */}
                 <div className={`absolute left-0 top-1 w-10 h-10 rounded-xl flex items-center justify-center text-on-primary font-bold shadow-md z-10 ${
@@ -537,11 +565,58 @@ export const IncidentDetailPage: React.FC = () => {
                 {/* Step Card */}
                 <div className="bg-surface-container-low/70 border border-outline-variant/30 rounded-2xl p-5 hover:border-primary/40 transition-all shadow-xs space-y-3">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-outline-variant/20 pb-3">
-                    <div className="flex items-center gap-3 flex-wrap">
-                      <span className="font-mono text-xs font-bold px-2.5 py-0.5 bg-surface-container-highest rounded text-on-surface-variant">
-                        Paso #{step.numeroPaso}
-                      </span>
-                      <h4 className="font-bold text-sm text-on-surface">{step.titulo}</h4>
+                    <div className="flex items-center gap-2.5 flex-wrap">
+                      {/* Selector para Suplantar / Cambiar Posición Directamente */}
+                      <div className="flex items-center gap-1.5 bg-surface-container-highest px-2 py-1 rounded-lg border border-outline-variant/30">
+                        <span className="text-[11px] font-bold text-on-surface-variant">Paso</span>
+                        <select
+                          value={step.numeroPaso}
+                          onChange={(e) => handleMoveStep(step.id, Number(e.target.value) - 1)}
+                          disabled={isReordering || steps.length <= 1}
+                          className="bg-transparent text-xs font-mono font-bold text-primary focus:outline-none cursor-pointer border-none"
+                          title="Cambiar posición del paso (Suplantar orden)"
+                        >
+                          {steps.map((_, idx) => (
+                            <option key={idx + 1} value={idx + 1}>
+                              #{idx + 1}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Botones rápidos de Mover al inicio / Subir / Bajar */}
+                      {steps.length > 1 && (
+                        <div className="flex items-center gap-0.5 bg-surface-container px-1 py-0.5 rounded-lg border border-outline-variant/30">
+                          {index > 0 && (
+                            <button
+                              onClick={() => handleMoveStep(step.id, 0)}
+                              disabled={isReordering}
+                              className="p-1 hover:bg-primary/10 hover:text-primary text-on-surface-variant rounded transition-colors cursor-pointer"
+                              title="Mover como Primer Paso (#1)"
+                            >
+                              <span className="material-symbols-outlined text-sm">vertical_align_top</span>
+                            </button>
+                          )}
+                          <button
+                            onClick={() => handleMoveStep(step.id, index - 1)}
+                            disabled={index === 0 || isReordering}
+                            className="p-1 hover:bg-primary/10 hover:text-primary text-on-surface-variant disabled:opacity-30 disabled:hover:bg-transparent rounded transition-colors cursor-pointer"
+                            title="Subir una posición"
+                          >
+                            <span className="material-symbols-outlined text-sm">keyboard_arrow_up</span>
+                          </button>
+                          <button
+                            onClick={() => handleMoveStep(step.id, index + 1)}
+                            disabled={index === steps.length - 1 || isReordering}
+                            className="p-1 hover:bg-primary/10 hover:text-primary text-on-surface-variant disabled:opacity-30 disabled:hover:bg-transparent rounded transition-colors cursor-pointer"
+                            title="Bajar una posición"
+                          >
+                            <span className="material-symbols-outlined text-sm">keyboard_arrow_down</span>
+                          </button>
+                        </div>
+                      )}
+
+                      <h4 className="font-bold text-sm text-on-surface ml-1">{step.titulo}</h4>
                       <span className="text-[11px] font-mono px-2 py-0.5 bg-surface-container rounded uppercase text-primary font-medium">
                         {step.tipo}
                       </span>
