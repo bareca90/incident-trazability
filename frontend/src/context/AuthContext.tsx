@@ -72,7 +72,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const hasPermission = useCallback((optionCode: string, access: TipoAcceso = "ver"): boolean => {
     if (!user) return false;
     if (user.isAdmin) return true;
-    if (user.roles?.some((r) => r.esAdmin)) return true;
+    if (user.roles?.some((r: any) => (typeof r === "string" ? false : !!r.esAdmin))) return true;
     if (!user.permissions) return false;
     return user.permissions.some(
       (p) => p.codigoOpcion === optionCode && p.acceso === access && p.permitido

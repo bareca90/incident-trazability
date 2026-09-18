@@ -200,45 +200,73 @@ async function seed() {
     }
   }
 
-  // Asignar permisos automáticos al rol 'CONSULTOR' si existe para que pueda consultar incidencias
-  const consultorRole = await prisma.role.findUnique({ where: { codigo: 'CONSULTOR' } });
-  if (consultorRole) {
-    const incListaOpt = await prisma.menuOption.findUnique({ where: { codigo: 'INC_LISTA' } });
-    const incDetalleOpt = await prisma.menuOption.findUnique({ where: { codigo: 'INC_DETALLE' } });
-    
-    if (incListaOpt) {
-      await prisma.roleOptionAccess.upsert({
-        where: {
-          roleId_menuOptionId_acceso: {
-            roleId: consultorRole.id,
-            menuOptionId: incListaOpt.id,
-            acceso: 'ver',
-          },
-        },
-        update: { permitido: true },
-        create: {
-          roleId: consultorRole.id,
-          menuOptionId: incListaOpt.id,
-          acceso: 'ver',
-          permitido: true,
-        },
-      });
-    }
+  // Crear roles estándar si no existen
+  const defaultRoles = [
+    { codigo: 'CONSULTOR', nombre: 'Consultor de Incidencias', descripcion: 'Acceso de solo lectura a incidencias y soluciones', esAdmin: false },
+    { codigo: 'DESARROLLADOR', nombre: 'Desarrollador / Técnico', descripcion: 'Registro, edición y resolución de incidencias', esAdmin: false },
+    { codigo: 'OPERADOR', nombre: 'Operador de Soporte', descripcion: 'Apertura y seguimiento de incidencias', esAdmin: false },
+  ];
 
-    if (incDetalleOpt) {
+  for (const roleData of defaultRoles) {
+    await prisma.role.upsert({
+      where: { codigo: roleData.codigo },
+      update: { nombre: roleData.nombre, descripcion: roleData.descripcion },
+      create: roleData,
+    });
+    console.log(`Role [${roleData.codigo}] upserted`);
+  }
+
+  // Definir matriz de permisos por defecto para roles no-admin
+  const rolePermissionsMap = {
+    CONSULTOR: [
+      { codigoOpcion: 'INC_LISTA', acceso: 'ver' },
+      { codigoOpcion: 'INC_DETALLE', acceso: 'ver' },
+      { codigoOpcion: 'CONF_SISTEMAS', acceso: 'ver' },
+    ],
+    DESARROLLADOR: [
+      { codigoOpcion: 'INC_LISTA', acceso: 'ver' },
+      { codigoOpcion: 'INC_NUEVA', acceso: 'ver' },
+      { codigoOpcion: 'INC_NUEVA', acceso: 'crear' },
+      { codigoOpcion: 'INC_DETALLE', acceso: 'ver' },
+      { codigoOpcion: 'INC_DETALLE', acceso: 'editar' },
+      { codigoOpcion: 'SOL_PASOS', acceso: 'ver' },
+      { codigoOpcion: 'SOL_PASOS', acceso: 'crear' },
+      { codigoOpcion: 'SOL_PASOS', acceso: 'editar' },
+      { codigoOpcion: 'CONF_SISTEMAS', acceso: 'ver' },
+    ],
+    OPERADOR: [
+      { codigoOpcion: 'INC_LISTA', acceso: 'ver' },
+      { codigoOpcion: 'INC_NUEVA', acceso: 'ver' },
+      { codigoOpcion: 'INC_NUEVA', acceso: 'crear' },
+      { codigoOpcion: 'INC_DETALLE', acceso: 'ver' },
+      { codigoOpcion: 'CONF_SISTEMAS', acceso: 'ver' },
+    ],
+  };
+
+  const allOptions = await prisma.menuOption.findMany();
+  const optionMap = new Map(allOptions.map((o) => [o.codigo, o.id]));
+
+  for (const [roleCodigo, perms] of Object.entries(rolePermissionsMap)) {
+    const role = await prisma.role.findUnique({ where: { codigo: roleCodigo } });
+    if (!role) continue;
+
+    for (const p of perms) {
+      const menuOptionId = optionMap.get(p.codigoOpcion);
+      if (!menuOptionId) continue;
+
       await prisma.roleOptionAccess.upsert({
         where: {
           roleId_menuOptionId_acceso: {
-            roleId: consultorRole.id,
-            menuOptionId: incDetalleOpt.id,
-            acceso: 'ver',
+            roleId: role.id,
+            menuOptionId,
+            acceso: p.acceso,
           },
         },
         update: { permitido: true },
         create: {
-          roleId: consultorRole.id,
-          menuOptionId: incDetalleOpt.id,
-          acceso: 'ver',
+          roleId: role.id,
+          menuOptionId,
+          acceso: p.acceso,
           permitido: true,
         },
       });
@@ -254,3 +282,4 @@ seed()
     process.exit(1);
   })
   .finally(() => prisma.$disconnect());
+

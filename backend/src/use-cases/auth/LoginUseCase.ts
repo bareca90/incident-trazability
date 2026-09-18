@@ -1,5 +1,6 @@
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { IRoleRepository } from "../../domain/repositories/IRoleRepository";
+import { IMenuRepository } from "../../domain/repositories/IMenuRepository";
 import { hashService } from "../../infrastructure/services/HashService";
 import { jwtService } from "../../infrastructure/services/JwtService";
 import { UnauthorizedError, ForbiddenError } from "../../shared/errors/AppError";
@@ -14,6 +15,7 @@ export class LoginUseCase {
   constructor(
     private userRepo: IUserRepository,
     private roleRepo: IRoleRepository,
+    private menuRepo: IMenuRepository,
   ) {}
 
   async execute(input: LoginInput): Promise<LoginOutput> {
@@ -37,8 +39,9 @@ export class LoginUseCase {
     await this.userRepo.resetLoginAttempts(user.id);
     await this.userRepo.updateLastLogin(user.id);
 
-    const roles    = await this.roleRepo.findUserRoles(user.id);
-    const isAdmin  = roles.some((r) => r.esAdmin);
+    const roles       = await this.roleRepo.findUserRoles(user.id);
+    const isAdmin     = roles.some((r) => r.esAdmin);
+    const permissions = await this.menuRepo.findUserPermissions(user.id, isAdmin);
     const roleCodigos = roles.map((r) => r.codigo);
     const sessionId   = uuidv4();
 
@@ -50,8 +53,9 @@ export class LoginUseCase {
       user: {
         id: user.id, username: user.username, email: user.email,
         nombres: user.nombres, apellidos: user.apellidos,
-        mustChangePwd: user.mustChangePwd, roles: roleCodigos, isAdmin,
+        mustChangePwd: user.mustChangePwd, roles, isAdmin, permissions,
       },
     };
   }
 }
+

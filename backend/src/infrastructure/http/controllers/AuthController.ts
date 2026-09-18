@@ -32,7 +32,7 @@ export class AuthController {
   async login(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const input  = loginSchema.parse(req.body);
-      const result = await new LoginUseCase(userRepo, roleRepo).execute(input);
+      const result = await new LoginUseCase(userRepo, roleRepo, menuRepo).execute(input);
       await auditLogService.logFromRequest(req, "LOGIN", {
         modulo: "auth", entidad: "users", entidadId: result.user.id as string,
         descripcion: `Login exitoso para ${input.email}`,
